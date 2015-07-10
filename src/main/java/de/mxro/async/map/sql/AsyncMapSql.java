@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import de.mxro.async.map.Store;
-import de.mxro.async.map.AsyncMaps;
+import de.mxro.async.map.Stores;
 import de.mxro.async.map.sql.internal.EncodeCaseInsensitiveKey;
 import de.mxro.async.map.sql.internal.SqlAsyncMapImplementation;
 import de.mxro.async.map.sql.internal.SqlConnectionFactory;
@@ -82,7 +82,7 @@ public final class AsyncMapSql {
      * @return
      */
     public static final <V> Store<String, V> encodeKeysForCaseInsensitiveStorage(final Store<String, V> map) {
-        return AsyncMaps.filterKeys(new EncodeCaseInsensitiveKey(), map);
+        return Stores.filterKeys(new EncodeCaseInsensitiveKey(), map);
     }
 
 }
