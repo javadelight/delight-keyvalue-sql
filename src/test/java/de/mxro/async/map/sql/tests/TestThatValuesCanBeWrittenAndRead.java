@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.mxro.async.map.AsyncMap;
+import de.mxro.async.map.Store;
 import de.mxro.async.map.sql.AsyncMapSql;
 import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.async.map.sql.SqlConnectionConfiguration;
@@ -22,7 +22,7 @@ import de.mxro.serialization.jre.StreamSource;
 
 public class TestThatValuesCanBeWrittenAndRead {
 
-    AsyncMap<String, Object> map;
+    Store<String, Object> map;
 
     SqlConnectionConfiguration sqlConf;
     SqlAsyncMapDependencies deps;
@@ -103,7 +103,7 @@ public class TestThatValuesCanBeWrittenAndRead {
 
         Assert.assertEquals(42, map.getSync("2"));
 
-        final AsyncMap<String, Object> map2 = AsyncMapSql.createMap(AsyncMapSql.fromSqlConfiguration(sqlConf), deps);
+        final Store<String, Object> map2 = AsyncMapSql.createMap(AsyncMapSql.fromSqlConfiguration(sqlConf), deps);
 
         Assert.assertEquals(42, map2.getSync("2"));
 

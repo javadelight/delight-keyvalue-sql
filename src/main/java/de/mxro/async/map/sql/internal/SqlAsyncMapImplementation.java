@@ -25,14 +25,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.mxro.async.map.AsyncMap;
+import de.mxro.async.map.Store;
 import de.mxro.async.map.operations.MapOperation;
 import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
 import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.serialization.jre.SerializationJre;
 import one.utils.jre.OneUtilsJre;
 
-public class SqlAsyncMapImplementation<V> implements AsyncMap<String, V> {
+public class SqlAsyncMapImplementation<V> implements Store<String, V> {
 
     private final static boolean ENABLE_DEBUG = false;
 

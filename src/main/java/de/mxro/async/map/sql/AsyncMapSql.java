@@ -4,7 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import de.mxro.async.map.AsyncMap;
+import de.mxro.async.map.Store;
 import de.mxro.async.map.AsyncMaps;
 import de.mxro.async.map.sql.internal.EncodeCaseInsensitiveKey;
 import de.mxro.async.map.sql.internal.SqlAsyncMapImplementation;
@@ -31,7 +31,7 @@ public final class AsyncMapSql {
      *            Run-time dependencies for the maps.
      * @return
      */
-    public static final <V> AsyncMap<String, V> createMap(final SqlAsyncMapConfiguration conf,
+    public static final <V> Store<String, V> createMap(final SqlAsyncMapConfiguration conf,
             final SqlAsyncMapDependencies deps) {
         return new SqlAsyncMapImplementation<V>(conf, deps);
     }
@@ -81,7 +81,7 @@ public final class AsyncMapSql {
      * @param map
      * @return
      */
-    public static final <V> AsyncMap<String, V> encodeKeysForCaseInsensitiveStorage(final AsyncMap<String, V> map) {
+    public static final <V> Store<String, V> encodeKeysForCaseInsensitiveStorage(final Store<String, V> map) {
         return AsyncMaps.filterKeys(new EncodeCaseInsensitiveKey(), map);
     }
 
