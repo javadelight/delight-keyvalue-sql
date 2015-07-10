@@ -40,7 +40,7 @@ public class TestThatValuesCanBeWrittenAndRead {
 
             @Override
             public void apply(final ValueCallback<Success> callback) {
-                map.commit(AsyncCommon.wrap(callback));
+                map.commit(AsyncCommon.asSimpleCallback(callback));
             }
         });
 
@@ -55,7 +55,7 @@ public class TestThatValuesCanBeWrittenAndRead {
 
             @Override
             public void apply(final ValueCallback<Success> callback) {
-                map.put("1", "Just a test Value", AsyncCommon.wrap(callback));
+                map.put("1", "Just a test Value", AsyncCommon.asSimpleCallback(callback));
             }
         });
 
@@ -63,7 +63,7 @@ public class TestThatValuesCanBeWrittenAndRead {
 
             @Override
             public void apply(final ValueCallback<Success> callback) {
-                map.commit(AsyncCommon.wrap(callback));
+                map.commit(AsyncCommon.asSimpleCallback(callback));
             }
         });
 
@@ -97,7 +97,7 @@ public class TestThatValuesCanBeWrittenAndRead {
 
             @Override
             public void apply(final ValueCallback<Success> callback) {
-                map.commit(AsyncCommon.wrap(callback));
+                map.commit(AsyncCommon.asSimpleCallback(callback));
             }
         });
 
@@ -118,7 +118,7 @@ public class TestThatValuesCanBeWrittenAndRead {
 
             @Override
             public void apply(final ValueCallback<Success> callback) {
-                map.commit(AsyncCommon.wrap(callback));
+                map.commit(AsyncCommon.asSimpleCallback(callback));
             }
         });
 
@@ -187,7 +187,7 @@ public class TestThatValuesCanBeWrittenAndRead {
 
             @Override
             public void apply(final ValueCallback<Success> callback) {
-                map.start(AsyncCommon.wrap(callback));
+                map.start(AsyncCommon.asSimpleCallback(callback));
             }
         });
     }
@@ -198,7 +198,7 @@ public class TestThatValuesCanBeWrittenAndRead {
 
             @Override
             public void apply(final ValueCallback<Success> callback) {
-                map.stop(AsyncCommon.wrap(callback));
+                map.stop(AsyncCommon.asSimpleCallback(callback));
             }
         });
 
