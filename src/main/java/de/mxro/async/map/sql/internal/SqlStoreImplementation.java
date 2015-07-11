@@ -281,8 +281,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         synchronized (pendingInserts) {
 
-            // System.out.println("Currently pending: " +
-            // pendingInserts.size());
             pendingInserts.put(uri, node);
 
         }
@@ -299,14 +297,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     @Override
     public V getSync(final String key) {
 
-        // System.out.println("get " + key);
         final V value = (V) getNode(key);
-        // System.out.println("got " + value);
-        // if
-        // (key.equals("mxrogm/mxrogm/xplr/.n/Manage/.n/Projects/.n/Appjangle_Apps/.n/Maybes/.n/Application_Deployment/Reading_It"))
-        // {
-        // throw new RuntimeException();
-        // }
+
         return value;
     }
 
