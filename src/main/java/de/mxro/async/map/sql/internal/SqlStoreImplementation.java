@@ -32,7 +32,7 @@ import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.serialization.jre.SerializationJre;
 import one.utils.jre.OneUtilsJre;
 
-public class SqlAsyncMapImplementation<V> implements Store<String, V> {
+public class SqlStoreImplementation<V> implements Store<String, V> {
 
     private final static boolean ENABLE_DEBUG = false;
 
@@ -595,7 +595,7 @@ public class SqlAsyncMapImplementation<V> implements Store<String, V> {
         callback.onSuccess();
     }
 
-    public SqlAsyncMapImplementation(final SqlAsyncMapConfiguration conf, final SqlAsyncMapDependencies deps) {
+    public SqlStoreImplementation(final SqlAsyncMapConfiguration conf, final SqlAsyncMapDependencies deps) {
         super();
 
         this.conf = conf;

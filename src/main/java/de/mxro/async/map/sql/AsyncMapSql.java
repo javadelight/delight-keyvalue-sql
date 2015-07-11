@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import de.mxro.async.map.Store;
 import de.mxro.async.map.Stores;
 import de.mxro.async.map.sql.internal.EncodeCaseInsensitiveKey;
-import de.mxro.async.map.sql.internal.SqlAsyncMapImplementation;
+import de.mxro.async.map.sql.internal.SqlStoreImplementation;
 import de.mxro.async.map.sql.internal.SqlConnectionFactory;
 
 /**
@@ -33,7 +33,7 @@ public final class AsyncMapSql {
      */
     public static final <V> Store<String, V> createMap(final SqlAsyncMapConfiguration conf,
             final SqlAsyncMapDependencies deps) {
-        return new SqlAsyncMapImplementation<V>(conf, deps);
+        return new SqlStoreImplementation<V>(conf, deps);
     }
 
     public static final SqlAsyncMapConfiguration fromSqlConfiguration(final SqlConnectionConfiguration sqlConf) {
