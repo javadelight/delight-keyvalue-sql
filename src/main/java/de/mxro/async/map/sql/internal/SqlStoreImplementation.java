@@ -462,7 +462,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         try {
             deleteStatement = connection.prepareStatement(conf.sql().getMultiDeleteTemplate());
-            deleteStatement.setQueryTimeout(10);
+            deleteStatement.setQueryTimeout(50000);
 
             deleteStatement.setString(1, uriStartsWith);
             deleteStatement.executeUpdate();
@@ -470,7 +470,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 System.out.println("SqlConnection: Deleting multiple [" + uriStartsWith + "].");
             }
 
-            // connection.commit();
         } finally {
             if (deleteStatement != null) {
                 deleteStatement.close();
