@@ -51,6 +51,7 @@
 			<groupId>org.javadelight</groupId>
 			<artifactId>delight-keyvalue-tests</artifactId>
 			<version>[0.0.1,)</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
