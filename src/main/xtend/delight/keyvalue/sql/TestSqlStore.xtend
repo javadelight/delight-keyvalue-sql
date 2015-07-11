@@ -24,11 +24,7 @@ class TestSqlStore {
 	package SqlAsyncMapDependencies deps
 
 
-	@Test
-	def void test_multi_delete() {
-		new DefMultiDelete().test(map)
-	}
-
+	
 	@Test 
 	def void test_synchronous_operations() throws Exception {
 		map.putSync("1", "Just a test Value")

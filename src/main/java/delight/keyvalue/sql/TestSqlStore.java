@@ -15,7 +15,6 @@ import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
 import delight.functional.Success;
 import delight.keyvalue.Store;
-import delight.keyvalue.tests.DefMultiDelete;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.After;
 import org.junit.Assert;
@@ -29,12 +28,6 @@ public class TestSqlStore {
   SqlConnectionConfiguration sqlConf;
   
   SqlAsyncMapDependencies deps;
-  
-  @Test
-  public void test_multi_delete() {
-    DefMultiDelete _defMultiDelete = new DefMultiDelete();
-    _defMultiDelete.test(this.map);
-  }
   
   @Test
   public void test_synchronous_operations() throws Exception {
