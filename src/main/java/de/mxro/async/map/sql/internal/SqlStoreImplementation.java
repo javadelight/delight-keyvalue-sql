@@ -531,6 +531,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 getResult.getStatement.close();
             }
         }
+
+        onCompleted.onSuccess();
     }
 
     public synchronized void waitForAllPendingRequests(final SimpleCallback callback) {
