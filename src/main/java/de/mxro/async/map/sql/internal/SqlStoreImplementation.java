@@ -496,8 +496,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     }
 
     @Override
-    public void performOperation(final StoreOperation<Object, Object> operation, final ValueCallback<Object> callback) {
-        operation.applyOn((StoreImplementation<Object, Object>) this, callback);
+    public void performOperation(final StoreOperation<String, V> operation, final ValueCallback<Object> callback) {
+        operation.applyOn(this, callback);
     }
 
     @Override
