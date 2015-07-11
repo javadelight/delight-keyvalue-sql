@@ -5,7 +5,9 @@ import delight.async.callbacks.ValueCallback;
 import delight.concurrency.schedule.SingleInstanceQueueWorker;
 import delight.concurrency.wrappers.SimpleExecutor;
 import delight.concurrency.wrappers.SimpleExecutor.WhenExecutorShutDown;
+import delight.functional.Closure;
 import delight.functional.Fn;
+import delight.keyvalue.StoreEntry;
 import delight.keyvalue.StoreImplementation;
 import delight.keyvalue.operations.StoreOperation;
 
@@ -458,6 +460,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     }
 
     private void performMultiDelete(final String uriStartsWith) throws SQLException {
+        assertConnection();
         PreparedStatement deleteStatement = null;
 
         try {
@@ -473,6 +476,61 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         } finally {
             if (deleteStatement != null) {
                 deleteStatement.close();
+            }
+        }
+    }
+
+    @Override
+    public void getAll(final String keyStartsWith, final Closure<StoreEntry<String, V>> onEntry,
+            final SimpleCallback onCompleted) {
+
+    }
+
+    private Object performMultiGet(final String uri) throws SQLException, IOException {
+        assertConnection();
+
+        SqlGetResources getResult = null;
+
+        try {
+
+            try {
+                getResult = readFromSqlDatabase(uri);
+            } catch (final Throwable t) {
+                // try reconnecting once if any error occurs
+                initConnection();
+                try {
+                    getResult = readFromSqlDatabase(uri);
+                } catch (final SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (!getResult.resultSet.next()) {
+
+                if (ENABLE_DEBUG) {
+                    System.out.println("SqlConnection: Not found [" + uri + "].");
+                }
+
+                return null;
+            }
+
+            final InputStream is = getResult.resultSet.getBinaryStream(2);
+
+            final byte[] data = OneUtilsJre.toByteArray(is);
+            is.close();
+            getResult.resultSet.close();
+            assert data != null;
+
+            final Object node = deps.getSerializer()
+                    .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
+            if (ENABLE_DEBUG) {
+                System.out.println("SqlConnection: Retrieved [" + node + "].");
+            }
+            return node;
+
+        } finally {
+            if (getResult != null) {
+                getResult.getStatement.close();
             }
         }
     }
