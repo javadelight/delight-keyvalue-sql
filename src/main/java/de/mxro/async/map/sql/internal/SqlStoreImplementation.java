@@ -264,27 +264,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             }
         }
 
-        private void performMultiDelete(final String uriStartsWith) throws SQLException {
-            PreparedStatement deleteStatement = null;
-
-            try {
-                deleteStatement = connection.prepareStatement(conf.sql().getMultiDeleteTemplate());
-                deleteStatement.setQueryTimeout(10);
-
-                deleteStatement.setString(1, uriStartsWith);
-                deleteStatement.executeUpdate();
-                if (ENABLE_DEBUG) {
-                    System.out.println("SqlConnection: Deleting multiple [" + uriStartsWith + "].");
-                }
-
-                // connection.commit();
-            } finally {
-                if (deleteStatement != null) {
-                    deleteStatement.close();
-                }
-            }
-        }
-
         public WriteWorker(final SimpleExecutor executor, final Queue<String> queue) {
             super(executor, queue, OneUtilsJre.newJreConcurrency());
         }
@@ -466,10 +445,37 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             @Override
             public void onSuccess() {
-
+                try {
+                    performMultiDelete(keyStartsWith);
+                } catch (final SQLException e) {
+                    callback.onFailure(e);
+                    return;
+                }
+                callback.onSuccess();
             }
         });
 
+    }
+
+    private void performMultiDelete(final String uriStartsWith) throws SQLException {
+        PreparedStatement deleteStatement = null;
+
+        try {
+            deleteStatement = connection.prepareStatement(conf.sql().getMultiDeleteTemplate());
+            deleteStatement.setQueryTimeout(10);
+
+            deleteStatement.setString(1, uriStartsWith);
+            deleteStatement.executeUpdate();
+            if (ENABLE_DEBUG) {
+                System.out.println("SqlConnection: Deleting multiple [" + uriStartsWith + "].");
+            }
+
+            // connection.commit();
+        } finally {
+            if (deleteStatement != null) {
+                deleteStatement.close();
+            }
+        }
     }
 
     public synchronized void waitForAllPendingRequests(final SimpleCallback callback) {
