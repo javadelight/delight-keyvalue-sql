@@ -13,10 +13,9 @@ import delight.async.Operation;
 import delight.async.callbacks.SimpleCallback;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
-import delight.functional.Function;
 import delight.functional.Success;
 import delight.keyvalue.Store;
-import delight.keyvalue.tests.StoreTests;
+import delight.keyvalue.tests.DefMultiDelete;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.After;
 import org.junit.Assert;
@@ -32,14 +31,9 @@ public class TestSqlStore {
   SqlAsyncMapDependencies deps;
   
   @Test
-  public void test_basic_tests() {
-    final Function<Void, Store<String, Object>> _function = new Function<Void, Store<String, Object>>() {
-      @Override
-      public Store<String, Object> apply(final Void it) {
-        return TestSqlStore.this.map;
-      }
-    };
-    StoreTests.test(_function);
+  public void test_multi_delete() {
+    DefMultiDelete _defMultiDelete = new DefMultiDelete();
+    _defMultiDelete.test(this.map);
   }
   
   @Test

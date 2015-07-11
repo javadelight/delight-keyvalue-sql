@@ -12,8 +12,7 @@ import delight.async.callbacks.ValueCallback
 import delight.async.jre.Async
 import delight.functional.Success
 import delight.keyvalue.Store
-import delight.keyvalue.Stores
-import delight.keyvalue.tests.StoreTests
+import delight.keyvalue.tests.DefMultiDelete
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -26,10 +25,8 @@ class TestSqlStore {
 
 
 	@Test
-	def void test_basic_tests() {
-		StoreTests.test [
-			 map
-		]
+	def void test_multi_delete() {
+		new DefMultiDelete().test(map)
 	}
 
 	@Test 
