@@ -263,6 +263,27 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             }
         }
 
+        private void performMultiDelete(final String uriStartsWith) throws SQLException {
+            PreparedStatement deleteStatement = null;
+
+            try {
+                deleteStatement = connection.prepareStatement(conf.sql().getMultiDeleteTemplate());
+                deleteStatement.setQueryTimeout(10);
+
+                deleteStatement.setString(1, uri);
+                deleteStatement.executeUpdate();
+                if (ENABLE_DEBUG) {
+                    System.out.println("SqlConnection: Deleting [" + uri + "].");
+                }
+
+                // connection.commit();
+            } finally {
+                if (deleteStatement != null) {
+                    deleteStatement.close();
+                }
+            }
+        }
+
         public WriteWorker(final SimpleExecutor executor, final Queue<String> queue) {
             super(executor, queue, OneUtilsJre.newJreConcurrency());
         }
