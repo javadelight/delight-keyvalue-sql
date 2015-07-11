@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.mxro.async.map.Store;
-import de.mxro.async.map.operations.MapOperation;
+import de.mxro.async.map.operations.StoreOperation;
 import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
 import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.serialization.jre.SerializationJre;
@@ -496,7 +496,7 @@ public class SqlAsyncMapImplementation<V> implements Store<String, V> {
     }
 
     @Override
-    public void performOperation(final MapOperation operation) {
+    public void performOperation(final StoreOperation operation) {
         // nothing
     }
 
