@@ -484,7 +484,14 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     @Override
     public void getAll(final String keyStartsWith, final Closure<StoreEntry<String, V>> onEntry,
             final SimpleCallback onCompleted) {
+        try {
+            performMultiGet(keyStartsWith, onEntry, onCompleted);
+        } catch (final Exception e) {
+            onCompleted.onFailure(e);
+            return;
+        }
 
+        onCompleted.onSuccess();
     }
 
     private void performMultiGet(final String uri, final Closure<StoreEntry<String, V>> onEntry,
@@ -532,7 +539,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             }
         }
 
-        onCompleted.onSuccess();
     }
 
     public synchronized void waitForAllPendingRequests(final SimpleCallback callback) {
