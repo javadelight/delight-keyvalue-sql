@@ -270,10 +270,10 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 deleteStatement = connection.prepareStatement(conf.sql().getMultiDeleteTemplate());
                 deleteStatement.setQueryTimeout(10);
 
-                deleteStatement.setString(1, uri);
+                deleteStatement.setString(1, uriStartsWith);
                 deleteStatement.executeUpdate();
                 if (ENABLE_DEBUG) {
-                    System.out.println("SqlConnection: Deleting [" + uri + "].");
+                    System.out.println("SqlConnection: Deleting multiple [" + uriStartsWith + "].");
                 }
 
                 // connection.commit();
