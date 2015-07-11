@@ -522,7 +522,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
                 final byte[] data = OneUtilsJre.toByteArray(is);
                 is.close();
-                getResult.resultSet.close();
+
                 assert data != null;
 
                 final Object node = deps.getSerializer()
@@ -534,6 +534,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         } finally {
             if (getResult != null) {
+                getResult.resultSet.close();
                 getResult.getStatement.close();
             }
         }
