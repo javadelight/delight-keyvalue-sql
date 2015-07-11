@@ -48,7 +48,7 @@ class SqlTests {
 				return "test"
 			}
 		}
-		AsyncMapSql.assertTable(sqlConf)
+		val connection = AsyncMapSql.assertTable(sqlConf)
 		val Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer()
 		deps = [return serializer]
 		val Store<String, Object> map = AsyncMapSql.createMap(AsyncMapSql.fromSqlConfiguration(sqlConf), deps)
@@ -63,7 +63,7 @@ class SqlTests {
 		
 		Async.waitFor([ValueCallback<Success> callback|map.stop(AsyncCommon.asSimpleCallback(callback))])
 		
-		
+		connection.close
 	}
 	
 }
