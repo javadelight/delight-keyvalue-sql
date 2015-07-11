@@ -486,7 +486,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     }
 
-    private Object performMultiGet(final String uri) throws SQLException, IOException {
+    private void performMultiGet(final String uri, final Closure<StoreEntry<String, V>> onEntry,
+            final SimpleCallback onCompleted) throws SQLException, IOException {
         assertConnection();
 
         final SqlGetResources getResult = null;
