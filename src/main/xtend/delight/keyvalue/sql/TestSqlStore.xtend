@@ -1,15 +1,5 @@
 package delight.keyvalue.sql
 
-import delight.async.AsyncCommon
-import delight.async.Operation
-import delight.async.callbacks.ValueCallback
-import delight.async.jre.Async
-import delight.functional.Success
-import delight.keyvalue.Store
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
 import de.mxro.async.map.sql.AsyncMapSql
 import de.mxro.async.map.sql.SqlAsyncMapDependencies
 import de.mxro.async.map.sql.SqlConnectionConfiguration
@@ -17,11 +7,30 @@ import de.mxro.serialization.Serializer
 import de.mxro.serialization.jre.SerializationJre
 import de.mxro.serialization.jre.StreamDestination
 import de.mxro.serialization.jre.StreamSource
+import delight.async.AsyncCommon
+import delight.async.callbacks.ValueCallback
+import delight.async.jre.Async
+import delight.functional.Success
+import delight.keyvalue.Store
+import delight.keyvalue.Stores
+import delight.keyvalue.tests.StoreTests
+import org.junit.After
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
 
 class TestSqlStore {
 	package Store<String, Object> map
 	package SqlConnectionConfiguration sqlConf
 	package SqlAsyncMapDependencies deps
+
+
+	@Test
+	def void test_basic_tests() {
+		StoreTests.testAll [
+			 map
+		]
+	}
 
 	@Test 
 	def void test_synchronous_operations() throws Exception {

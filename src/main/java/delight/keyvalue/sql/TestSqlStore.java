@@ -13,8 +13,10 @@ import delight.async.Operation;
 import delight.async.callbacks.SimpleCallback;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
+import delight.functional.Function;
 import delight.functional.Success;
 import delight.keyvalue.Store;
+import delight.keyvalue.tests.StoreTests;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.After;
 import org.junit.Assert;
@@ -28,6 +30,17 @@ public class TestSqlStore {
   SqlConnectionConfiguration sqlConf;
   
   SqlAsyncMapDependencies deps;
+  
+  @Test
+  public void test_basic_tests() {
+    final Function<Void, Store<String, Object>> _function = new Function<Void, Store<String, Object>>() {
+      @Override
+      public Store<String, Object> apply(final Void it) {
+        return TestSqlStore.this.map;
+      }
+    };
+    StoreTests.testAll(_function);
+  }
   
   @Test
   public void test_synchronous_operations() throws Exception {
