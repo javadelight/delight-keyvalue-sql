@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 @SuppressWarnings("all")
-public class TestThatValuesCanBeWrittenAndRead {
+public class TestSqlStore {
   Store<String, Object> map;
   
   SqlConnectionConfiguration sqlConf;
@@ -39,7 +39,7 @@ public class TestThatValuesCanBeWrittenAndRead {
       @Override
       public void apply(final ValueCallback<Success> callback) {
         SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
-        TestThatValuesCanBeWrittenAndRead.this.map.commit(_asSimpleCallback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
@@ -53,7 +53,7 @@ public class TestThatValuesCanBeWrittenAndRead {
       @Override
       public void apply(final ValueCallback<Success> callback) {
         SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
-        TestThatValuesCanBeWrittenAndRead.this.map.put("1", "Just a test Value", _asSimpleCallback);
+        TestSqlStore.this.map.put("1", "Just a test Value", _asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
@@ -61,14 +61,14 @@ public class TestThatValuesCanBeWrittenAndRead {
       @Override
       public void apply(final ValueCallback<Success> callback) {
         SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
-        TestThatValuesCanBeWrittenAndRead.this.map.commit(_asSimpleCallback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function_1);
     final Operation<Success> _function_2 = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        TestThatValuesCanBeWrittenAndRead.this.map.get("1", new ValueCallback<Object>() {
+        TestSqlStore.this.map.get("1", new ValueCallback<Object>() {
           @Override
           public void onFailure(final Throwable t) {
             callback.onFailure(t);
@@ -92,7 +92,7 @@ public class TestThatValuesCanBeWrittenAndRead {
       @Override
       public void apply(final ValueCallback<Success> callback) {
         SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
-        TestThatValuesCanBeWrittenAndRead.this.map.commit(_asSimpleCallback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
@@ -112,7 +112,7 @@ public class TestThatValuesCanBeWrittenAndRead {
       @Override
       public void apply(final ValueCallback<Success> callback) {
         SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
-        TestThatValuesCanBeWrittenAndRead.this.map.commit(_asSimpleCallback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
@@ -176,7 +176,7 @@ public class TestThatValuesCanBeWrittenAndRead {
       @Override
       public void apply(final ValueCallback<Success> callback) {
         SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
-        TestThatValuesCanBeWrittenAndRead.this.map.start(_asSimpleCallback);
+        TestSqlStore.this.map.start(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function_1);
@@ -188,7 +188,7 @@ public class TestThatValuesCanBeWrittenAndRead {
       @Override
       public void apply(final ValueCallback<Success> callback) {
         SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
-        TestThatValuesCanBeWrittenAndRead.this.map.stop(_asSimpleCallback);
+        TestSqlStore.this.map.stop(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);

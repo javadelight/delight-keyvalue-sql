@@ -18,7 +18,7 @@ import de.mxro.serialization.jre.SerializationJre
 import de.mxro.serialization.jre.StreamDestination
 import de.mxro.serialization.jre.StreamSource
 
-class TestThatValuesCanBeWrittenAndRead {
+class TestSqlStore {
 	package Store<String, Object> map
 	package SqlConnectionConfiguration sqlConf
 	package SqlAsyncMapDependencies deps
