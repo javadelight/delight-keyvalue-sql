@@ -467,7 +467,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             deleteStatement = connection.prepareStatement(conf.sql().getMultiDeleteTemplate());
             deleteStatement.setQueryTimeout(50000);
 
-            deleteStatement.setString(1, uriStartsWith);
+            deleteStatement.setString(1, uriStartsWith + "%");
             deleteStatement.executeUpdate();
             if (ENABLE_DEBUG) {
                 System.out.println("SqlConnection: Deleting multiple [" + uriStartsWith + "].");
@@ -499,7 +499,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             getStatement.setQueryTimeout(150000);
 
-            getStatement.setString(1, uri);
+            getStatement.setString(1, uri + "%");
 
             final ResultSet resultSet = getStatement.executeQuery();
 

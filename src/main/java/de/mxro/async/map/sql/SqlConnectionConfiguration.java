@@ -25,7 +25,7 @@ public abstract class SqlConnectionConfiguration {
     }
 
     public String getMultiGetTemplate() {
-        return "SELECT Id, Value FROM " + getTableName() + " WHERE Id LIKE ?%";
+        return "SELECT Id, Value FROM " + getTableName() + " WHERE Id LIKE ?";
     }
 
     public String getDeleteTemplate() {
@@ -33,7 +33,7 @@ public abstract class SqlConnectionConfiguration {
     }
 
     public String getMultiDeleteTemplate() {
-        return "DELETE FROM " + getTableName() + " WHERE Id LIKE ?%";
+        return "DELETE FROM " + getTableName() + " WHERE Id LIKE ?";
     }
 
     /**
