@@ -23,7 +23,8 @@ class TestThatValuesCanBeWrittenAndRead {
 	package SqlConnectionConfiguration sqlConf
 	package SqlAsyncMapDependencies deps
 
-	@Test def void test_synchronous_operations() throws Exception {
+	@Test 
+	def void test_synchronous_operations() throws Exception {
 		map.putSync("1", "Just a test Value")
 		Assert.assertEquals("Just a test Value", map.getSync("1"))
 		map.putSync("2", 42)
@@ -31,7 +32,8 @@ class TestThatValuesCanBeWrittenAndRead {
 		Assert.assertEquals(42, map.getSync("2"))
 	}
 
-	@Test def void test_asynchronous_operations() throws Exception {
+	@Test 
+	def void test_asynchronous_operations() throws Exception {
 		Async.waitFor([ ValueCallback<Success> callback |
 			map.put("1", "Just a test Value", AsyncCommon.asSimpleCallback(callback))
 		])
@@ -50,7 +52,8 @@ class TestThatValuesCanBeWrittenAndRead {
 		])
 	}
 
-	@Test def void test_persistence_in_medium() throws Exception {
+	@Test
+	def void test_persistence_in_medium() throws Exception {
 		map.putSync("2", 42)
 		Async.waitFor([ValueCallback<Success> callback|map.commit(AsyncCommon.asSimpleCallback(callback))])
 		Assert.assertEquals(42, map.getSync("2"))
@@ -58,7 +61,8 @@ class TestThatValuesCanBeWrittenAndRead {
 		Assert.assertEquals(42, map2.getSync("2"))
 	}
 
-	@Test def void test_difference_in_case() throws Exception {
+	@Test 
+	def void test_difference_in_case() throws Exception {
 		map.putSync("Read_it", 42)
 		map.putSync("Read_It", 43)
 		Async.waitFor([ValueCallback<Success> callback|map.commit(AsyncCommon.asSimpleCallback(callback))])
@@ -69,7 +73,8 @@ class TestThatValuesCanBeWrittenAndRead {
 		// Assert.assertEquals(42, map2.getSync("2"));
 	}
 
-	@Before def void setUp() throws Exception {
+	@Before 
+	def void setUp() throws Exception {
 		sqlConf = new SqlConnectionConfiguration() {
 			override String getDriverClassName() {
 				return "org.h2.Driver"
