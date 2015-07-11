@@ -9,6 +9,7 @@ import delight.functional.Closure;
 import delight.functional.Fn;
 import delight.keyvalue.StoreEntry;
 import delight.keyvalue.StoreImplementation;
+import delight.keyvalue.internal.v01.StoreEntryData;
 import delight.keyvalue.operations.StoreOperation;
 
 import java.io.ByteArrayInputStream;
@@ -520,9 +521,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
                 final Object node = deps.getSerializer()
                         .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
-                if (ENABLE_DEBUG) {
-                    System.out.println("SqlConnection: Retrieved [" + node + "].");
-                }
+
+                onEntry.apply(new StoreEntryData<String, V>(getResult.resultSet.getString(1), (V) node));
 
             }
 
