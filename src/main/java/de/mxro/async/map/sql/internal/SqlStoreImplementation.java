@@ -48,6 +48,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     private final WriteWorker writeWorker;
 
     private final static Object DELETE_NODE = Fn.object();
+    private final static Object DELETE_MULTIPLE_NODES = Fn.object();
 
     private class WriteWorker extends SingleInstanceQueueWorker<String> {
 
@@ -451,6 +452,23 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             pendingInserts.put(uri, DELETE_NODE);
         }
         scheduleWrite(uri);
+
+    }
+
+    @Override
+    public void removeAll(final String keyStartsWith, final SimpleCallback callback) {
+        waitForAllPendingRequests(new SimpleCallback() {
+
+            @Override
+            public void onFailure(final Throwable t) {
+                callback.onFailure(t);
+            }
+
+            @Override
+            public void onSuccess() {
+
+            }
+        });
 
     }
 
