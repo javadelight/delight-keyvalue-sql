@@ -8,8 +8,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import de.mxro.async.map.sql.internal.EncodeCaseInsensitiveKey;
-import de.mxro.async.map.sql.internal.SqlStoreImplementation;
 import de.mxro.async.map.sql.internal.SqlConnectionFactory;
+import de.mxro.async.map.sql.internal.SqlStoreImplementation;
 
 /**
  * <p>
@@ -47,7 +47,7 @@ public final class AsyncMapSql {
         };
     }
 
-    public static final void assertTable(final SqlConnectionConfiguration sqlConf) {
+    public static final Connection assertTable(final SqlConnectionConfiguration sqlConf) {
         final Connection connection = SqlConnectionFactory.createConnection(sqlConf);
 
         try {
@@ -67,6 +67,8 @@ public final class AsyncMapSql {
         } catch (final SQLException e) {
             throw new RuntimeException(e);
         }
+
+        return connection;
     }
 
     /**
