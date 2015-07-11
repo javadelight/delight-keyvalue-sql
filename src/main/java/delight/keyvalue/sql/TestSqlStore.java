@@ -39,7 +39,7 @@ public class TestSqlStore {
         return TestSqlStore.this.map;
       }
     };
-    StoreTests.testAll(_function);
+    StoreTests.test(_function);
   }
   
   @Test

@@ -27,7 +27,7 @@ class TestSqlStore {
 
 	@Test
 	def void test_basic_tests() {
-		StoreTests.testAll [
+		StoreTests.test [
 			 map
 		]
 	}
