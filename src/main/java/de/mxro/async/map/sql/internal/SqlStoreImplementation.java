@@ -6,6 +6,8 @@ import delight.concurrency.schedule.SingleInstanceQueueWorker;
 import delight.concurrency.wrappers.SimpleExecutor;
 import delight.concurrency.wrappers.SimpleExecutor.WhenExecutorShutDown;
 import delight.functional.Fn;
+import delight.keyvalue.StoreImplementation;
+import delight.keyvalue.operations.StoreOperation;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,8 +27,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.mxro.async.map.StoreImplementation;
-import de.mxro.async.map.operations.StoreOperation;
 import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
 import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.serialization.jre.SerializationJre;

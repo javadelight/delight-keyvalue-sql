@@ -1,8 +1,7 @@
 package de.mxro.async.map.sql;
 
 import delight.factories.Configuration;
-
-import de.mxro.async.map.Store;
+import delight.keyvalue.Store;
 
 /**
  * Configuration for a SQL linked {@link Store}.

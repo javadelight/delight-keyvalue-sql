@@ -5,13 +5,13 @@ import delight.async.Operation;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
 import delight.functional.Success;
+import delight.keyvalue.Store;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.mxro.async.map.Store;
 import de.mxro.async.map.sql.AsyncMapSql;
 import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.async.map.sql.SqlConnectionConfiguration;

@@ -1,8 +1,8 @@
 package de.mxro.async.map.sql;
 
 import delight.factories.Dependencies;
+import delight.keyvalue.Store;
 
-import de.mxro.async.map.Store;
 import de.mxro.serialization.Serializer;
 import de.mxro.serialization.jre.StreamDestination;
 import de.mxro.serialization.jre.StreamSource;

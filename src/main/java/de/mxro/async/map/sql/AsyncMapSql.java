@@ -1,11 +1,12 @@
 package de.mxro.async.map.sql;
 
+import delight.keyvalue.Store;
+import delight.keyvalue.Stores;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import de.mxro.async.map.Store;
-import de.mxro.async.map.Stores;
 import de.mxro.async.map.sql.internal.EncodeCaseInsensitiveKey;
 import de.mxro.async.map.sql.internal.SqlStoreImplementation;
 import de.mxro.async.map.sql.internal.SqlConnectionFactory;
