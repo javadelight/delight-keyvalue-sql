@@ -489,21 +489,25 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     private Object performMultiGet(final String uri) throws SQLException, IOException {
         assertConnection();
 
-        SqlGetResources getResult = null;
+        final SqlGetResources getResult = null;
 
         try {
 
-            try {
-                getResult = readFromSqlDatabase(uri);
-            } catch (final Throwable t) {
-                // try reconnecting once if any error occurs
-                initConnection();
-                try {
-                    getResult = readFromSqlDatabase(uri);
-                } catch (final SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            PreparedStatement getStatement = null;
+
+            getStatement = connection.prepareStatement(conf.sql().getMultiGetTemplate());
+
+            getStatement.setQueryTimeout(150000);
+
+            getStatement.setString(1, uri);
+
+            final ResultSet resultSet = getStatement.executeQuery();
+
+            connection.commit();
+
+            final SqlGetResources res = new SqlGetResources();
+            res.resultSet = resultSet;
+            res.getStatement = getStatement;
 
             if (!getResult.resultSet.next()) {
 
