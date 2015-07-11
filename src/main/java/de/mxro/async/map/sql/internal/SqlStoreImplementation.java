@@ -540,6 +540,53 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     }
 
+    @Override
+    public void count(final String keyStartsWith, final ValueCallback<Integer> callback) {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void performCount(final String uri, final ValueCallback<Integer> callback)
+            throws SQLException, IOException {
+        assertConnection();
+
+        SqlGetResources getResult = null;
+
+        try {
+
+            PreparedStatement getStatement = null;
+
+            getStatement = connection.prepareStatement(conf.sql().getCountTemplate());
+
+            getStatement.setQueryTimeout(150000);
+
+            getStatement.setString(1, uri + "%");
+
+            final ResultSet resultSet = getStatement.executeQuery();
+
+            connection.commit();
+
+            getResult = new SqlGetResources();
+            getResult.resultSet = resultSet;
+            getResult.getStatement = getStatement;
+
+            if (getResult.resultSet.next()) {
+                callback.onSuccess(getResult.resultSet.getInt(1));
+
+            } else {
+
+                callback.onFailure(new Exception("Failure while running count statement."));
+
+            }
+
+        } finally {
+            if (getResult != null) {
+                getResult.getStatement.close();
+            }
+        }
+
+    }
+
     public synchronized void waitForAllPendingRequests(final SimpleCallback callback) {
 
         new Thread() {
