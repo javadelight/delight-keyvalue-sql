@@ -28,6 +28,10 @@ public abstract class SqlConnectionConfiguration {
         return "SELECT Id, Value FROM " + getTableName() + " WHERE Id LIKE ?";
     }
 
+    public String getCountTemplate() {
+        return "SELECT COUNT(*) FROM " + getTableName() + " WHERE Id LIKE ?";
+    }
+
     public String getDeleteTemplate() {
         return "DELETE FROM " + getTableName() + " WHERE Id = ?";
     }
