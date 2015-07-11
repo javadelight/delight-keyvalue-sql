@@ -1,11 +1,19 @@
 package delight.keyvalue.sql
 
-import delight.keyvalue.Stores
-import delight.keyvalue.tests.StoreTests
 import org.junit.Test
+import delight.keyvalue.tests.StoreTests
 
 class TestBasic {
 	
+	@Test
+	def void test() {
 	
+		for (test : StoreTests.all) {
+			SqlTests.perform(test)
+		}
+	
+		
+	
+	}
 	
 }
