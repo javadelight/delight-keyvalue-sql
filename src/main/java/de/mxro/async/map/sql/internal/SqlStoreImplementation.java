@@ -25,14 +25,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.mxro.async.map.Store;
+import de.mxro.async.map.StoreImplementation;
 import de.mxro.async.map.operations.StoreOperation;
 import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
 import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.serialization.jre.SerializationJre;
 import one.utils.jre.OneUtilsJre;
 
-public class SqlStoreImplementation<V> implements Store<String, V> {
+public class SqlStoreImplementation<V> implements StoreImplementation<String, V> {
 
     private final static boolean ENABLE_DEBUG = false;
 
@@ -67,8 +67,8 @@ public class SqlStoreImplementation<V> implements Store<String, V> {
 
                     if (!pendingInserts.containsKey(uri)) {
                         if (ENABLE_DEBUG) {
-                            System.out.println(this + ": Insert has been performed by previous operation [" + uri
-                                    + "].");
+                            System.out
+                                    .println(this + ": Insert has been performed by previous operation [" + uri + "].");
                         }
                         continue;
                     }
@@ -281,7 +281,7 @@ public class SqlStoreImplementation<V> implements Store<String, V> {
 
         synchronized (pendingInserts) {
 
-            // System.out.println("Currently pending:  " +
+            // System.out.println("Currently pending: " +
             // pendingInserts.size());
             pendingInserts.put(uri, node);
 
@@ -333,7 +333,7 @@ public class SqlStoreImplementation<V> implements Store<String, V> {
                 return node;
             }
 
-            assert !pendingInserts.containsKey(uri);
+            assert!pendingInserts.containsKey(uri);
 
             pendingGets.add(uri);
 
@@ -390,8 +390,8 @@ public class SqlStoreImplementation<V> implements Store<String, V> {
             getResult.resultSet.close();
             assert data != null;
 
-            final Object node = deps.getSerializer().deserialize(
-                    SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
+            final Object node = deps.getSerializer()
+                    .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
             if (ENABLE_DEBUG) {
                 System.out.println("SqlConnection: Retrieved [" + node + "].");
             }
@@ -497,7 +497,13 @@ public class SqlStoreImplementation<V> implements Store<String, V> {
 
     @Override
     public void performOperation(final StoreOperation operation) {
-        // nothing
+
+    }
+
+    @Override
+    public void clearCache() {
+        // Do nothing ...
+
     }
 
     @Override
