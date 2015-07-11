@@ -490,7 +490,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             final SimpleCallback onCompleted) throws SQLException, IOException {
         assertConnection();
 
-        final SqlGetResources getResult = null;
+        SqlGetResources getResult = null;
 
         try {
 
@@ -506,32 +506,25 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             connection.commit();
 
-            final SqlGetResources res = new SqlGetResources();
-            res.resultSet = resultSet;
-            res.getStatement = getStatement;
+            getResult = new SqlGetResources();
+            getResult.resultSet = resultSet;
+            getResult.getStatement = getStatement;
 
-            if (!getResult.resultSet.next()) {
+            while (getResult.resultSet.next()) {
+                final InputStream is = getResult.resultSet.getBinaryStream(2);
 
+                final byte[] data = OneUtilsJre.toByteArray(is);
+                is.close();
+                getResult.resultSet.close();
+                assert data != null;
+
+                final Object node = deps.getSerializer()
+                        .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
                 if (ENABLE_DEBUG) {
-                    System.out.println("SqlConnection: Not found [" + uri + "].");
+                    System.out.println("SqlConnection: Retrieved [" + node + "].");
                 }
 
-                return null;
             }
-
-            final InputStream is = getResult.resultSet.getBinaryStream(2);
-
-            final byte[] data = OneUtilsJre.toByteArray(is);
-            is.close();
-            getResult.resultSet.close();
-            assert data != null;
-
-            final Object node = deps.getSerializer()
-                    .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
-            if (ENABLE_DEBUG) {
-                System.out.println("SqlConnection: Retrieved [" + node + "].");
-            }
-            return node;
 
         } finally {
             if (getResult != null) {
