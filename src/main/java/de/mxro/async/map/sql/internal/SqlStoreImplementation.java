@@ -542,8 +542,12 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     @Override
     public void count(final String keyStartsWith, final ValueCallback<Integer> callback) {
-        // TODO Auto-generated method stub
-
+        try {
+            performCount(keyStartsWith, callback);
+        } catch (final Exception e) {
+            callback.onFailure(e);
+            return;
+        }
     }
 
     private void performCount(final String uri, final ValueCallback<Integer> callback)
