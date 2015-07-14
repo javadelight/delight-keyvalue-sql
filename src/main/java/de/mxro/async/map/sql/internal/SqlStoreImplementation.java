@@ -413,15 +413,18 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
         sql.append(")");
 
-        System.out.println(sql);
+        // System.out.println(sql);
 
         final PreparedStatement stm = connection.prepareStatement(sql.toString());
         for (int i = 0; i < keys.size(); i++) {
             stm.setString(i + 1, keys.get(i));
         }
 
+        stm.setFetchSize(keys.size());
         final ResultSet resultSet = stm.executeQuery();
+
         final List<Object> res = new ArrayList<Object>(keys.size());
+
         while (resultSet.next()) {
             final InputStream is = resultSet.getBinaryStream(2);
 
