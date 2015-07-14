@@ -13,6 +13,7 @@ import delight.async.jre.Async
 import delight.functional.Success
 import delight.keyvalue.Store
 import delight.keyvalue.tests.StoreTest
+import delight.keyvalue.jre.StoresJre
 
 class SqlTests {
 	
@@ -51,7 +52,7 @@ class SqlTests {
 		val connection = AsyncMapSql.assertTable(sqlConf)
 		val Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer()
 		deps = [return serializer]
-		val Store<String, Object> map = AsyncMapSql.createMap(AsyncMapSql.fromSqlConfiguration(sqlConf), deps)
+		val Store<String, Object> map = StoresJre.forceBatchGets(5, AsyncMapSql.createMap(AsyncMapSql.fromSqlConfiguration(sqlConf), deps))
 		Async.waitFor([ValueCallback<Success> callback|map.start(AsyncCommon.asSimpleCallback(callback))])
 		
 		// TEST

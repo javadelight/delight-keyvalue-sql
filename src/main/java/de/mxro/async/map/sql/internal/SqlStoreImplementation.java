@@ -436,7 +436,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         resultSet.close();
 
-        assert res.size() == keys.size();
+        assert res.size() == keys.size() : "result: " + res.size() + " input: " + keys.size();
 
         cb.onSuccess(res);
 

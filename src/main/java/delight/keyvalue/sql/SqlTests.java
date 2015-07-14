@@ -15,6 +15,7 @@ import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
 import delight.functional.Success;
 import delight.keyvalue.Store;
+import delight.keyvalue.jre.StoresJre;
 import delight.keyvalue.tests.StoreTest;
 import java.sql.Connection;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -72,7 +73,8 @@ public class SqlTests {
       };
       deps = _function;
       SqlAsyncMapConfiguration _fromSqlConfiguration = AsyncMapSql.fromSqlConfiguration(sqlConf);
-      final Store<String, Object> map = AsyncMapSql.<Object>createMap(_fromSqlConfiguration, deps);
+      Store<String, Object> _createMap = AsyncMapSql.<Object>createMap(_fromSqlConfiguration, deps);
+      final Store<String, Object> map = StoresJre.<String, Object>forceBatchGets(5, _createMap);
       final Operation<Success> _function_1 = new Operation<Success>() {
         @Override
         public void apply(final ValueCallback<Success> callback) {
