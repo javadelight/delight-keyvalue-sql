@@ -24,6 +24,10 @@ public abstract class SqlConnectionConfiguration {
         return "SELECT Id, Value FROM " + getTableName() + " WHERE Id = ?";
     }
 
+    public String getMultiSelectTemplate() {
+        return "SELECT Id, Value FROM " + getTableName() + " WHERE";
+    }
+
     public String getMultiGetTemplate() {
         return "SELECT Id, Value FROM " + getTableName() + " WHERE Id LIKE ?";
     }
