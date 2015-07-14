@@ -424,7 +424,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         final ResultSet resultSet = stm.executeQuery();
 
         final List<Object> res = new ArrayList<Object>(keys.size());
-
+        System.out.println("fetching " + sql);
         while (resultSet.next()) {
             final InputStream is = resultSet.getBinaryStream(2);
 
@@ -435,6 +435,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             final Object node = deps.getSerializer()
                     .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
+
+            System.out.println("got " + node);
 
             res.add(node);
         }
