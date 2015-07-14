@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -417,8 +418,9 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
 
         final ResultSet rs = stm.executeQuery();
+        final List<Object> res = new ArrayList<Object>(keys.size());
         while (rs.next()) {
-            System.out.println(rs.getString("jedi_name"));
+
         }
 
     }
