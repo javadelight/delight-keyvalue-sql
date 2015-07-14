@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -406,7 +407,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         final StringBuilder sql = new StringBuilder();
         sql.append(conf.sql().getMultiSelectTemplate() + " IN(");
         for (int i = 0; i < keys.size(); i++) {
-            sql.append("?");
+            sql.append("'"+keys.get(i)+"'");
             if (i + 1 < keys.size()) {
                 sql.append(",");
             }
@@ -415,13 +416,15 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         // System.out.println(sql);
 
-        final PreparedStatement stm = connection.prepareStatement(sql.toString());
-        for (int i = 0; i < keys.size(); i++) {
-            stm.setString(i + 1, keys.get(i));
-        }
+        final Statement stm = connection.createStatement(
+                ResultSet.TYPE_SCROLL_INSENSITIVE,
+                ResultSet.CONCUR_READ_ONLY);
+       // for (int i = 0; i < keys.size(); i++) {
+        //    stm.setString(i + 1, keys.get(i));
+      //  }
 
         stm.setFetchSize(keys.size());
-        final ResultSet resultSet = stm.executeQuery();
+        final ResultSet resultSet = stm.execute(sql);
 
         final List<Object> res = new ArrayList<Object>(keys.size());
         System.out.println("fetching " + sql);
@@ -439,6 +442,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             System.out.println("got " + node);
 
             res.add(node);
+            
+            resultSet.get
         }
 
         resultSet.close();
