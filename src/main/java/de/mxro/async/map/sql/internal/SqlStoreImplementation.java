@@ -475,15 +475,18 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                     results.clear();
                     synchronized (pendingInserts) {
 
-                        for (int i = 0;i<keys.size();i++) {
+                        for (int i = 0; i < keys.size(); i++) {
 
                             if (pendingInserts.containsKey(keys.get(i))) {
                                 results.add((V) pendingInserts.get(keys.get(i)));
                             } else {
-                                results.
+                                results.add((V) value.get(i));
                             }
                         }
                     }
+                    assert results.size() == keys.size();
+
+                    callback.onSuccess(results);
                 }
             });
         } catch (final Exception e) {
