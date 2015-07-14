@@ -413,6 +413,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
         sql.append(")");
 
+        System.out.println(sql);
+
         final PreparedStatement stm = connection.prepareStatement(sql.toString());
         for (int i = 0; i < keys.size(); i++) {
             stm.setString(i + 1, keys.get(i));
