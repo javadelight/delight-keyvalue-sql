@@ -442,21 +442,41 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void get(final List<String> keys, final ValueCallback<List<V>> callback) {
         final List<V> results = new ArrayList<V>(keys.size());
+
         synchronized (pendingInserts) {
 
             for (final String key : keys) {
 
                 if (pendingInserts.containsKey(key)) {
-                    results.add((V) pendingInserts.get(key))
+                    results.add((V) pendingInserts.get(key));
                 }
             }
         }
-        
+
         if (results.size() == keys.size()) {
             callback.onSuccess(results);
+            return;
+        }
+
+        try {
+            performMultiGet(keys, new ValueCallback<List<Object>>() {
+
+                @Override
+                public void onFailure(final Throwable t) {
+                    callback.onFailure(t);
+                }
+
+                @Override
+                public void onSuccess(final List<Object> value) {
+
+                }
+            });
+        } catch (final Exception e) {
+            callback.onFailure(e);
             return;
         }
 
