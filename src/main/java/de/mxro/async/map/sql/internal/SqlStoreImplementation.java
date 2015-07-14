@@ -400,7 +400,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
     }
 
-    private void performMultiGet(final List<String> keys, final ValueCallback<List<Object>> cb) throws SQLException {
+    private void performMultiGet(final List<String> keys, final ValueCallback<List<Object>> cb)
+            throws SQLException, IOException {
 
         final StringBuilder sql = new StringBuilder();
         sql.append(conf.sql().getMultiSelectTemplate() + " IN(");
@@ -417,11 +418,23 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             stm.setString(i + 1, keys.get(i));
         }
 
-        final ResultSet rs = stm.executeQuery();
+        final ResultSet resultSet = stm.executeQuery();
         final List<Object> res = new ArrayList<Object>(keys.size());
-        while (rs.next()) {
+        while (resultSet.next()) {
+            final InputStream is = resultSet.getBinaryStream(2);
 
+            final byte[] data = OneUtilsJre.toByteArray(is);
+            is.close();
+
+            assert data != null;
+
+            final Object node = deps.getSerializer()
+                    .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
+
+            res.add(node);
         }
+
+        resultSet.close();
 
     }
 
