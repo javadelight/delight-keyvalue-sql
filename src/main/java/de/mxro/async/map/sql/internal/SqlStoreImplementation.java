@@ -436,6 +436,10 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         resultSet.close();
 
+        assert res.size() == keys.size();
+
+        cb.onSuccess(res);
+
     }
 
     private final SqlGetResources readFromSqlDatabase(final String uri) throws SQLException {
