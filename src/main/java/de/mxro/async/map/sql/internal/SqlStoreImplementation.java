@@ -472,7 +472,18 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
                 @Override
                 public void onSuccess(final List<Object> value) {
+                    results.clear();
+                    synchronized (pendingInserts) {
 
+                        for (int i = 0;i<keys.size();i++) {
+
+                            if (pendingInserts.containsKey(keys.get(i))) {
+                                results.add((V) pendingInserts.get(keys.get(i)));
+                            } else {
+                                results.
+                            }
+                        }
+                    }
                 }
             });
         } catch (final Exception e) {
