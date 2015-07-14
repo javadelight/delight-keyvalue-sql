@@ -414,18 +414,13 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
         sql.append(")");
 
-        // System.out.println(sql);
-
         final Statement stm = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        // for (int i = 0; i < keys.size(); i++) {
-        // stm.setString(i + 1, keys.get(i));
-        // }
 
         stm.setFetchSize(keys.size());
         final ResultSet resultSet = stm.executeQuery(sql.toString());
 
         final List<Object> res = new ArrayList<Object>(keys.size());
-        System.out.println("fetching " + sql);
+
         while (resultSet.next()) {
             final InputStream is = resultSet.getBinaryStream(2);
 
@@ -436,8 +431,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             final Object node = deps.getSerializer()
                     .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
-
-            System.out.println("got " + node);
 
             res.add(node);
 
