@@ -442,6 +442,26 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     }
 
+    @Override
+    public void get(final List<String> keys, final ValueCallback<List<V>> callback) {
+        final List<V> results = new ArrayList<V>(keys.size());
+        synchronized (pendingInserts) {
+
+            for (final String key : keys) {
+
+                if (pendingInserts.containsKey(key)) {
+                    results.add((V) pendingInserts.get(key))
+                }
+            }
+        }
+        
+        if (results.size() == keys.size()) {
+            callback.onSuccess(results);
+            return;
+        }
+
+    }
+
     private final SqlGetResources readFromSqlDatabase(final String uri) throws SQLException {
 
         PreparedStatement getStatement = null;
