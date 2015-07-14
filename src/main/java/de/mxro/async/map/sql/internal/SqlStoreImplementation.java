@@ -399,37 +399,28 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
     }
 
-    private void performMultiGet(final List<String> keys, final ValueCallback<List<Object>> cb) {
-        
-        
-    
+    private void performMultiGet(final List<String> keys, final ValueCallback<List<Object>> cb) throws SQLException {
+
         final StringBuilder sql = new StringBuilder();
-        sql.append(conf.sql().getMultiSelectTemplate()+" IN(");
+        sql.append(conf.sql().getMultiSelectTemplate() + " IN(");
         for (int i = 0; i < keys.size(); i++) {
             sql.append("?");
-            if(i+1 < keys.size()){
+            if (i + 1 < keys.size()) {
                 sql.append(",");
             }
         }
         sql.append(")");
-       
 
-        try (final Connection con = DriverManager.getConnection(...)) {
-
-            PreparedStatement stm = con.prepareStatement(sql.toString());
-            for(int i=0; i < ids.length; i++){
-                stm.setInt(i+1, ids[i]);
-            }
-
-            ResultSet rs = stm.executeQuery();
-            while (rs.next()) {
-                System.out.println(rs.getString("jedi_name"));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        final PreparedStatement stm = connection.prepareStatement(sql.toString());
+        for (int i = 0; i < keys.size(); i++) {
+            stm.setString(i + 1, keys.get(i));
         }
-        
+
+        final ResultSet rs = stm.executeQuery();
+        while (rs.next()) {
+            System.out.println(rs.getString("jedi_name"));
+        }
+
     }
 
     private final SqlGetResources readFromSqlDatabase(final String uri) throws SQLException {
