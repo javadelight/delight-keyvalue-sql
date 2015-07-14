@@ -2,6 +2,7 @@ package delight.keyvalue.sql;
 
 import delight.keyvalue.sql.SqlTests;
 import delight.keyvalue.tests.DefConcurrentGet;
+import delight.keyvalue.tests.DefConcurrentGetDifferentQuery;
 import org.junit.Test;
 
 @SuppressWarnings("all")
@@ -10,5 +11,11 @@ public class TestConcurrentGet {
   public void test() {
     DefConcurrentGet _defConcurrentGet = new DefConcurrentGet();
     SqlTests.perform(_defConcurrentGet);
+  }
+  
+  @Test
+  public void test_differnet_query() {
+    DefConcurrentGetDifferentQuery _defConcurrentGetDifferentQuery = new DefConcurrentGetDifferentQuery();
+    SqlTests.perform(_defConcurrentGetDifferentQuery);
   }
 }

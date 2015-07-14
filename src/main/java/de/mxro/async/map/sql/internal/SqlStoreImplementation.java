@@ -418,7 +418,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         stm.setFetchSize(keys.size());
         final ResultSet resultSet = stm.executeQuery(sql.toString());
-
+        System.out.println(sql);
         final List<Object> res = new ArrayList<Object>(keys.size());
 
         while (resultSet.next()) {
