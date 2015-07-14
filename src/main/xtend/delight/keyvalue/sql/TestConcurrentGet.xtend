@@ -19,9 +19,7 @@ class TestConcurrentGet {
 	def void test_differnet_query() {
 		
 		SqlTests.perform(new DefConcurrentGetDifferentQuery)
-		
-		
-		
+
 	}
 	
 }
