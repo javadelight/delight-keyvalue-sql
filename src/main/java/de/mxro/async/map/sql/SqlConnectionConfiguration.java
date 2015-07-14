@@ -25,7 +25,7 @@ public abstract class SqlConnectionConfiguration {
     }
 
     public String getMultiSelectTemplate() {
-        return "SELECT Id, Value FROM " + getTableName() + " WHERE";
+        return "SELECT Id, Value FROM " + getTableName() + " WHERE Id";
     }
 
     public String getMultiGetTemplate() {
