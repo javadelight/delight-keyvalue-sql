@@ -407,7 +407,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         final StringBuilder sql = new StringBuilder();
         sql.append(conf.sql().getMultiSelectTemplate() + " IN(");
         for (int i = 0; i < keys.size(); i++) {
-            sql.append("'"+keys.get(i)+"'");
+            sql.append("'" + keys.get(i) + "'");
             if (i + 1 < keys.size()) {
                 sql.append(",");
             }
@@ -416,15 +416,13 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         // System.out.println(sql);
 
-        final Statement stm = connection.createStatement(
-                ResultSet.TYPE_SCROLL_INSENSITIVE,
-                ResultSet.CONCUR_READ_ONLY);
-       // for (int i = 0; i < keys.size(); i++) {
-        //    stm.setString(i + 1, keys.get(i));
-      //  }
+        final Statement stm = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        // for (int i = 0; i < keys.size(); i++) {
+        // stm.setString(i + 1, keys.get(i));
+        // }
 
         stm.setFetchSize(keys.size());
-        final ResultSet resultSet = stm.execute(sql);
+        final ResultSet resultSet = stm.executeQuery(sql.toString());
 
         final List<Object> res = new ArrayList<Object>(keys.size());
         System.out.println("fetching " + sql);
@@ -442,8 +440,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             System.out.println("got " + node);
 
             res.add(node);
-            
-            resultSet.get
+
         }
 
         resultSet.close();
