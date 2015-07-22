@@ -414,16 +414,18 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
         sql.append(")");
 
+        assertConnection();
         final Statement stm = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
         stm.setFetchSize(keys.size());
         final ResultSet resultSet = stm.executeQuery(sql.toString());
-        // System.out.println(sql);
-        final List<Object> res = new ArrayList<Object>(keys.size());
+
+        final Map<String, Object> res = new HashMap<String, Object>(keys.size());
 
         while (resultSet.next()) {
-            final InputStream is = resultSet.getBinaryStream(2);
 
+            final String key = resultSet.getString(1);
+            final InputStream is = resultSet.getBinaryStream(2);
             final byte[] data = OneUtilsJre.toByteArray(is);
             is.close();
 
@@ -432,15 +434,22 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             final Object node = deps.getSerializer()
                     .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
 
-            res.add(node);
+            System.out.println(key);
+            res.put(key, node);
 
         }
 
         resultSet.close();
 
-        assert res.size() == keys.size() : "result: " + res.size() + " input: " + keys.size();
+        // assert res.size() == keys.size() : "result: " + res.size() + " input:
+        // " + keys.size();
+        final List<Object> results = new ArrayList<Object>(keys.size());
 
-        cb.onSuccess(res);
+        for (final String key : keys) {
+            results.add(res.get(key));
+        }
+
+        cb.onSuccess(results);
 
     }
 
