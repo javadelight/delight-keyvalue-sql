@@ -434,7 +434,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             final Object node = deps.getSerializer()
                     .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
 
-            System.out.println(key);
             res.put(key, node);
 
         }
