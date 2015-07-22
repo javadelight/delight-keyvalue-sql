@@ -21,27 +21,27 @@ public abstract class SqlConnectionConfiguration {
     public abstract String getTableName();
 
     public String getGetTemplate() {
-        return "SELECT Id, Value FROM " + getTableName() + " WHERE Id = ?";
+        return "SELECT Id, Value FROM '" + getTableName() + "' WHERE Id = ?";
     }
 
     public String getMultiSelectTemplate() {
-        return "SELECT Id, Value FROM " + getTableName() + " WHERE Id";
+        return "SELECT Id, Value FROM '" + getTableName() + "' WHERE Id";
     }
 
     public String getMultiGetTemplate() {
-        return "SELECT Id, Value FROM " + getTableName() + " WHERE Id LIKE ?";
+        return "SELECT Id, Value FROM '" + getTableName() + "' WHERE Id LIKE ?";
     }
 
     public String getCountTemplate() {
-        return "SELECT COUNT(*) FROM " + getTableName() + " WHERE Id LIKE ?";
+        return "SELECT COUNT(*) FROM '" + getTableName() + "' WHERE Id LIKE ?";
     }
 
     public String getDeleteTemplate() {
-        return "DELETE FROM " + getTableName() + " WHERE Id = ?";
+        return "DELETE FROM '" + getTableName() + "' WHERE Id = ?";
     }
 
     public String getMultiDeleteTemplate() {
-        return "DELETE FROM " + getTableName() + " WHERE Id LIKE ?";
+        return "DELETE FROM '" + getTableName() + "' WHERE Id LIKE ?";
     }
 
     /**
@@ -78,23 +78,23 @@ public abstract class SqlConnectionConfiguration {
     public abstract boolean supportsMerge();
 
     public String getMergeTemplate() {
-        return "MERGE INTO " + getTableName() + " (Id, Value) KEY (Id) VALUES (?, ?)";
+        return "MERGE INTO '" + getTableName() + "' (Id, Value) KEY (Id) VALUES (?, ?)";
     }
 
     public String getInsertTemplate() {
-        return "INSERT INTO " + getTableName() + "(Id, Value) VALUES (?,?)";
+        return "INSERT INTO '" + getTableName() + "' (Id, Value) VALUES (?,?)";
     }
 
     public String getUpdateTemplate() {
-        return "UPDATE " + getTableName() + " SET Value = ? WHERE Id = ?";
+        return "UPDATE '" + getTableName() + "' SET Value = ? WHERE Id = ?";
     }
 
     public String getDeleteTableTemplate(final String tableName) {
-        return "DROP TABLE " + tableName + "";
+        return "DROP TABLE '" + tableName + "'";
     }
 
     public String getCreateTableTemplate(final String tableName) {
-        return "CREATE TABLE " + tableName + " (Id varchar( 512 ) NOT NULL primary key, Value blob NOT NULL)";
+        return "CREATE TABLE '" + tableName + "' (Id varchar( 512 ) NOT NULL primary key, Value blob NOT NULL)";
     }
 
 }
