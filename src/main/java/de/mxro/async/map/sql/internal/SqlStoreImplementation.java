@@ -440,8 +440,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         resultSet.close();
 
-        // assert res.size() == keys.size() : "result: " + res.size() + " input:
-        // " + keys.size();
         final List<Object> results = new ArrayList<Object>(keys.size());
 
         for (final String key : keys) {
@@ -462,7 +460,12 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             for (final String key : keys) {
 
                 if (pendingInserts.containsKey(key)) {
-                    results.add((V) pendingInserts.get(key));
+                    final V fromPending = (V) pendingInserts.get(key);
+                    if (fromPending != DELETE_NODE) {
+                        results.add(fromPending);
+                    } else {
+                        results.add(null);
+                    }
                 }
             }
         }
@@ -488,7 +491,12 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                         for (int i = 0; i < keys.size(); i++) {
 
                             if (pendingInserts.containsKey(keys.get(i))) {
-                                results.add((V) pendingInserts.get(keys.get(i)));
+                                final V fromPending = (V) pendingInserts.get(keys.get(i));
+                                if (fromPending != DELETE_NODE) {
+                                    results.add(fromPending);
+                                } else {
+                                    results.add(null);
+                                }
                             } else {
                                 results.add((V) value.get(i));
                             }
