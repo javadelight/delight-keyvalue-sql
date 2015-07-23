@@ -583,6 +583,9 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             deleteStatement.setQueryTimeout(50000);
 
             deleteStatement.setString(1, uriStartsWith + "%");
+
+            System.out.println("deleteing " + deleteStatement.toString());
+
             deleteStatement.executeUpdate();
             if (ENABLE_DEBUG) {
                 System.out.println("SqlConnection: Deleting multiple [" + uriStartsWith + "].");
