@@ -584,7 +584,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             deleteStatement.setString(1, uriStartsWith + "%");
 
-            System.out.println("deleteing " + deleteStatement.toString());
+            // System.out.println("deleteing " + deleteStatement.toString());
 
             deleteStatement.executeUpdate();
             if (ENABLE_DEBUG) {
