@@ -639,6 +639,9 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             getStatement.setString(1, uri + "%");
 
+            getStatement.setInt(2, toIdx - fromIdx + 1);
+            getStatement.setInt(3, fromIdx + 1);
+
             final ResultSet resultSet = getStatement.executeQuery();
 
             connection.commit();
