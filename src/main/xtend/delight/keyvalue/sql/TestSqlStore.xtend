@@ -59,7 +59,7 @@ class TestSqlStore {
 		map.putSync("2", 42)
 		Async.waitFor([ValueCallback<Success> callback|map.commit(AsyncCommon.asSimpleCallback(callback))])
 		Assert.assertEquals(42, map.getSync("2"))
-		val Store<String, Object> map2 = SqlStores.SqlStores.create(SqlStores.fromSqlConfiguration(sqlConf), deps)
+		val Store<String, Object> map2 = SqlStores.create(SqlStores.fromSqlConfiguration(sqlConf), deps)
 		Assert.assertEquals(42, map2.getSync("2"))
 	}
 

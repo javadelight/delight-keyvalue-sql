@@ -87,9 +87,21 @@ public class TestSqlStore {
   
   @Test
   public void test_persistence_in_medium() throws Exception {
-    throw new Error("Unresolved compilation problems:"
-      + "\nThe method SqlStores is undefined for the type TestSqlStore"
-      + "\ncreate cannot be resolved");
+    this.map.putSync("2", Integer.valueOf(42));
+    final Operation<Success> _function = new Operation<Success>() {
+      @Override
+      public void apply(final ValueCallback<Success> callback) {
+        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
+      }
+    };
+    Async.<Success>waitFor(_function);
+    Object _sync = this.map.getSync("2");
+    Assert.assertEquals(Integer.valueOf(42), _sync);
+    SqlStoreConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
+    final Store<String, Object> map2 = SqlStores.<Object>create(_fromSqlConfiguration, this.deps);
+    Object _sync_1 = map2.getSync("2");
+    Assert.assertEquals(Integer.valueOf(42), _sync_1);
   }
   
   @Test
