@@ -5,7 +5,6 @@ import delight.async.callbacks.ValueCallback;
 import delight.concurrency.schedule.SingleInstanceQueueWorker;
 import delight.concurrency.wrappers.SimpleExecutor;
 import delight.concurrency.wrappers.SimpleExecutor.WhenExecutorShutDown;
-import delight.functional.Closure;
 import delight.functional.Fn;
 import delight.keyvalue.StoreEntry;
 import delight.keyvalue.StoreImplementation;
@@ -596,19 +595,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 deleteStatement.close();
             }
         }
-    }
-
-    @Override
-    public void getAll(final String keyStartsWith, final Closure<StoreEntry<String, V>> onEntry,
-            final SimpleCallback onCompleted) {
-        try {
-            performMultiGet(keyStartsWith, onEntry, onCompleted);
-        } catch (final Exception e) {
-            onCompleted.onFailure(e);
-            return;
-        }
-
-        onCompleted.onSuccess();
     }
 
     @Override
