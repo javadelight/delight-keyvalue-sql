@@ -1,4 +1,4 @@
-package delight.keyvalue.sql
+package delight.keyvalue.sql.tests
 
 import de.mxro.async.map.sql.SqlConnectionConfiguration
 import de.mxro.serialization.Serializer

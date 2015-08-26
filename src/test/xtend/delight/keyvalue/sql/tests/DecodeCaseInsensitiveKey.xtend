@@ -1,4 +1,4 @@
-package delight.keyvalue.sql
+package delight.keyvalue.sql.tests
 
 import delight.functional.Function
 

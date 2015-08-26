@@ -1,4 +1,4 @@
-package delight.keyvalue.sql
+package delight.keyvalue.sql.tests
 
 import org.junit.Test
 import de.mxro.async.map.sql.internal.EncodeCaseInsensitiveKey
