@@ -629,6 +629,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         SqlGetResources getResult = null;
 
+        final List<StoreEntry<String, V>> results = new ArrayList<StoreEntry<String, V>>();
+
         try {
 
             PreparedStatement getStatement = null;
@@ -639,8 +641,13 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             getStatement.setString(1, uri + "%");
 
-            getStatement.setInt(2, toIdx - fromIdx + 1);
-            getStatement.setInt(3, fromIdx);
+            if (toIdx != -1) {
+                getStatement.setInt(2, toIdx - fromIdx + 1);
+                getStatement.setInt(3, fromIdx);
+            } else {
+                getStatement.setInt(2, 100000);
+                getStatement.setInt(3, fromIdx);
+            }
 
             final ResultSet resultSet = getStatement.executeQuery();
 
@@ -661,7 +668,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 final Object node = deps.getSerializer()
                         .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
 
-                onEntry.apply(new StoreEntryData<String, V>(getResult.resultSet.getString(1), (V) node));
+                results.add(new StoreEntryData<String, V>(getResult.resultSet.getString(1), (V) node));
 
             }
 
@@ -671,6 +678,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 getResult.getStatement.close();
             }
         }
+
+        callback.onSuccess(results);
 
     }
 
