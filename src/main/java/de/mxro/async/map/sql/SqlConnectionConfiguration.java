@@ -29,7 +29,7 @@ public abstract class SqlConnectionConfiguration {
     }
 
     public String getMultiGetTemplate() {
-        return "SELECT Id, Value FROM `" + getTableName() + "` WHERE Id LIKE ?";
+        return "SELECT Id, Value FROM `" + getTableName() + "` WHERE Id LIKE ? LIMIT ? OFFSET ?";
     }
 
     public String getCountTemplate() {
