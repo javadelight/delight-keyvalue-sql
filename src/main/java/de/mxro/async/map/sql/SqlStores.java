@@ -39,9 +39,15 @@ public final class SqlStores {
         return new SqlStoreImplementation<V>(conf, deps);
     }
 
-    public static final <V> Store<String, V> create(final SqlStoreConfiguration conf,
+    public static final <V> Store<String, V> create(final SqlConnectionConfiguration conf,
             final Serializer<StreamSource, StreamDestination> serializer) {
-        return new SqlStoreImplementation<V>(conf, new SqlStoreDependencies() {
+        return new SqlStoreImplementation<V>(new SqlStoreConfiguration() {
+
+            @Override
+            public SqlConnectionConfiguration sql() {
+                return conf;
+            }
+        }, new SqlStoreDependencies() {
 
             @Override
             public Serializer<StreamSource, StreamDestination> getSerializer() {
