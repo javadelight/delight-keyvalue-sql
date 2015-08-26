@@ -599,13 +599,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     }
 
     @Override
-    public void getAll(final String keyStartsWith, final int fromIdx, final int toIdx,
-            final ValueCallback<List<StoreEntry<String, V>>> callback) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void getAll(final String keyStartsWith, final Closure<StoreEntry<String, V>> onEntry,
             final SimpleCallback onCompleted) {
         try {
@@ -618,8 +611,20 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         onCompleted.onSuccess();
     }
 
-    private void performMultiGet(final String uri, final Closure<StoreEntry<String, V>> onEntry,
-            final SimpleCallback onCompleted) throws SQLException, IOException {
+    @Override
+    public void getAll(final String keyStartsWith, final int fromIdx, final int toIdx,
+            final ValueCallback<List<StoreEntry<String, V>>> callback) {
+        try {
+            performMultiGet(keyStartsWith, fromIdx, toIdx, callback);
+        } catch (final Exception e) {
+            callback.onFailure(e);
+            return;
+        }
+
+    }
+
+    private void performMultiGet(final String uri, final int fromIdx, final int toIdx,
+            final ValueCallback<List<StoreEntry<String, V>>> callback) throws SQLException, IOException {
         assertConnection();
 
         SqlGetResources getResult = null;
