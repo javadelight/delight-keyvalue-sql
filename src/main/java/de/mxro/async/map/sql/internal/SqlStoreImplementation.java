@@ -599,6 +599,13 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     }
 
     @Override
+    public void getAll(final String keyStartsWith, final int fromIdx, final int toIdx,
+            final ValueCallback<List<StoreEntry<String, V>>> callback) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
     public void getAll(final String keyStartsWith, final Closure<StoreEntry<String, V>> onEntry,
             final SimpleCallback onCompleted) {
         try {
