@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import de.mxro.async.map.sql.internal.EncodeCaseInsensitiveKey;
 import de.mxro.async.map.sql.internal.SqlConnectionFactory;
 import de.mxro.async.map.sql.internal.SqlStoreImplementation;
+import de.mxro.serialization.Serializer;
+import de.mxro.serialization.jre.StreamDestination;
+import de.mxro.serialization.jre.StreamSource;
 
 /**
  * <p>
@@ -34,6 +37,17 @@ public final class SqlStores {
      */
     public static final <V> Store<String, V> create(final SqlStoreConfiguration conf, final SqlStoreDependencies deps) {
         return new SqlStoreImplementation<V>(conf, deps);
+    }
+
+    public static final <V> Store<String, V> create(final SqlStoreConfiguration conf,
+            final Serializer<StreamSource, StreamDestination> serializer) {
+        return new SqlStoreImplementation<V>(conf, new SqlStoreDependencies() {
+
+            @Override
+            public Serializer<StreamSource, StreamDestination> getSerializer() {
+                return serializer;
+            }
+        });
     }
 
     public static final SqlStoreConfiguration fromSqlConfiguration(final SqlConnectionConfiguration sqlConf) {
