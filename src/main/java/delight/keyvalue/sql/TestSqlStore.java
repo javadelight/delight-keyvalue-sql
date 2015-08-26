@@ -1,9 +1,9 @@
 package delight.keyvalue.sql;
 
-import de.mxro.async.map.sql.AsyncMapSql;
 import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
 import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.async.map.sql.SqlConnectionConfiguration;
+import de.mxro.async.map.sql.SqlStores;
 import de.mxro.serialization.Serializer;
 import de.mxro.serialization.jre.SerializationJre;
 import de.mxro.serialization.jre.StreamDestination;
@@ -98,8 +98,8 @@ public class TestSqlStore {
     Async.<Success>waitFor(_function);
     Object _sync = this.map.getSync("2");
     Assert.assertEquals(Integer.valueOf(42), _sync);
-    SqlAsyncMapConfiguration _fromSqlConfiguration = AsyncMapSql.fromSqlConfiguration(this.sqlConf);
-    final Store<String, Object> map2 = AsyncMapSql.<Object>createMap(_fromSqlConfiguration, this.deps);
+    SqlAsyncMapConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
+    final Store<String, Object> map2 = SqlStores.<Object>createMap(_fromSqlConfiguration, this.deps);
     Object _sync_1 = map2.getSync("2");
     Assert.assertEquals(Integer.valueOf(42), _sync_1);
   }
@@ -160,7 +160,7 @@ public class TestSqlStore {
         return "test";
       }
     };
-    AsyncMapSql.assertTable(this.sqlConf);
+    SqlStores.assertTable(this.sqlConf);
     final Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer();
     final SqlAsyncMapDependencies _function = new SqlAsyncMapDependencies() {
       @Override
@@ -169,8 +169,8 @@ public class TestSqlStore {
       }
     };
     this.deps = _function;
-    SqlAsyncMapConfiguration _fromSqlConfiguration = AsyncMapSql.fromSqlConfiguration(this.sqlConf);
-    Store<String, Object> _createMap = AsyncMapSql.<Object>createMap(_fromSqlConfiguration, this.deps);
+    SqlAsyncMapConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
+    Store<String, Object> _createMap = SqlStores.<Object>createMap(_fromSqlConfiguration, this.deps);
     this.map = _createMap;
     final Operation<Success> _function_1 = new Operation<Success>() {
       @Override

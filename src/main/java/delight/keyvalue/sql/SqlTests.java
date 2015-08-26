@@ -1,9 +1,9 @@
 package delight.keyvalue.sql;
 
-import de.mxro.async.map.sql.AsyncMapSql;
 import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
 import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.async.map.sql.SqlConnectionConfiguration;
+import de.mxro.async.map.sql.SqlStores;
 import de.mxro.serialization.Serializer;
 import de.mxro.serialization.jre.SerializationJre;
 import de.mxro.serialization.jre.StreamDestination;
@@ -63,7 +63,7 @@ public class SqlTests {
           return "test";
         }
       };
-      final Connection connection = AsyncMapSql.assertTable(sqlConf);
+      final Connection connection = SqlStores.assertTable(sqlConf);
       final Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer();
       final SqlAsyncMapDependencies _function = new SqlAsyncMapDependencies() {
         @Override
@@ -72,8 +72,8 @@ public class SqlTests {
         }
       };
       deps = _function;
-      SqlAsyncMapConfiguration _fromSqlConfiguration = AsyncMapSql.fromSqlConfiguration(sqlConf);
-      Store<String, Object> _createMap = AsyncMapSql.<Object>createMap(_fromSqlConfiguration, deps);
+      SqlAsyncMapConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(sqlConf);
+      Store<String, Object> _createMap = SqlStores.<Object>createMap(_fromSqlConfiguration, deps);
       final Store<String, Object> map = StoresJre.<String, Object>forceBatchGets(5, _createMap);
       final Operation<Success> _function_1 = new Operation<Success>() {
         @Override

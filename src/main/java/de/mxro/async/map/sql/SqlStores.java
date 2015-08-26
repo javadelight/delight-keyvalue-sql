@@ -21,7 +21,7 @@ import de.mxro.async.map.sql.internal.SqlStoreImplementation;
  * @author <a href="http://www.mxro.de">Max Rohde</a>
  *
  */
-public final class AsyncMapSql {
+public final class SqlStores {
 
     /**
      * Creates a new AsyncMap persisted by a JDBC compatible SQL database.
