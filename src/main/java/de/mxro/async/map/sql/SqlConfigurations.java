@@ -4,33 +4,35 @@ public class SqlConfigurations {
 
     public static SqlConnectionConfiguration inMemoryH2() {
         return new SqlConnectionConfiguration() {
-            
-            @Override 
+
+            @Override
             public String getDriverClassName() {
                 return "org.h2.Driver";
             }
 
-            @Override 
+            @Override
             public boolean supportsInsertOrUpdate() {
                 return false;
             }
 
-            @Override 
+            @Override
             public boolean supportsMerge() {
                 return true;
             }
 
-            @Override 
+            @Override
             public String getMergeTemplate() {
-                return "MERGE INTO "+getTableName()+" (Id, Value) KEY (Id) VALUES (?, ?)";
+                return "MERGE INTO " + getTableName() + " (Id, Value) KEY (Id) VALUES (?, ?)";
             }
 
-            override String getConnectionString() {
-                return "jdbc:h2:mem:test"
+            @Override
+            public String getConnectionString() {
+                return "jdbc:h2:mem:test";
             }
 
-            override String getTableName() {
-                return "test"
+            @Override
+            public String getTableName() {
+                return "test";
             }
         };
     }
