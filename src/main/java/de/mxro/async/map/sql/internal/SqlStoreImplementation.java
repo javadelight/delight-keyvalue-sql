@@ -796,7 +796,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             @Override
             public void onSuccess() {
-                System.out.println("trigger shutdown");
+
                 writeWorker.getThread().getExecutor().shutdown(new WhenExecutorShutDown() {
 
                     @Override
