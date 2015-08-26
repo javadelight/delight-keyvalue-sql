@@ -1,6 +1,5 @@
 package delight.keyvalue.sql
 
-import de.mxro.async.map.sql.SqlAsyncMapDependencies
 import de.mxro.async.map.sql.SqlConnectionConfiguration
 import de.mxro.serialization.Serializer
 import de.mxro.serialization.jre.SerializationJre
@@ -17,11 +16,12 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import de.mxro.async.map.sql.SqlStores
+import de.mxro.async.map.sql.SqlStoreDependencies
 
 class TestSqlStore {
 	package Store<String, Object> map
 	package SqlConnectionConfiguration sqlConf
-	package SqlAsyncMapDependencies deps
+	package SqlStoreDependencies deps
 
 
 	
@@ -59,7 +59,7 @@ class TestSqlStore {
 		map.putSync("2", 42)
 		Async.waitFor([ValueCallback<Success> callback|map.commit(AsyncCommon.asSimpleCallback(callback))])
 		Assert.assertEquals(42, map.getSync("2"))
-		val Store<String, Object> map2 = SqlStores.createMap(SqlStores.fromSqlConfiguration(sqlConf), deps)
+		val Store<String, Object> map2 = SqlStores.SqlStores.create(SqlStores.fromSqlConfiguration(sqlConf), deps)
 		Assert.assertEquals(42, map2.getSync("2"))
 	}
 
@@ -102,10 +102,10 @@ class TestSqlStore {
 				return "test"
 			}
 		}
-		de.mxro.async.map.sql.SqlStores.assertTable(sqlConf)
+		SqlStores.assertTable(sqlConf)
 		val Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer()
 		deps = [return serializer]
-		map = SqlStores.createMap(SqlStores.fromSqlConfiguration(sqlConf), deps)
+		map = SqlStores.create(SqlStores.fromSqlConfiguration(sqlConf), deps)
 		Async.waitFor([ValueCallback<Success> callback|map.start(AsyncCommon.asSimpleCallback(callback))])
 	}
 

@@ -1,8 +1,8 @@
 package delight.keyvalue.sql;
 
-import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
-import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.async.map.sql.SqlConnectionConfiguration;
+import de.mxro.async.map.sql.SqlStoreConfiguration;
+import de.mxro.async.map.sql.SqlStoreDependencies;
 import de.mxro.async.map.sql.SqlStores;
 import de.mxro.serialization.Serializer;
 import de.mxro.serialization.jre.SerializationJre;
@@ -26,7 +26,7 @@ public class SqlTests {
   public static void perform(final StoreTest test) {
     try {
       SqlConnectionConfiguration sqlConf = null;
-      SqlAsyncMapDependencies deps = null;
+      SqlStoreDependencies deps = null;
       sqlConf = new SqlConnectionConfiguration() {
         @Override
         public String getDriverClassName() {
@@ -65,16 +65,16 @@ public class SqlTests {
       };
       final Connection connection = SqlStores.assertTable(sqlConf);
       final Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer();
-      final SqlAsyncMapDependencies _function = new SqlAsyncMapDependencies() {
+      final SqlStoreDependencies _function = new SqlStoreDependencies() {
         @Override
         public Serializer<StreamSource, StreamDestination> getSerializer() {
           return serializer;
         }
       };
       deps = _function;
-      SqlAsyncMapConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(sqlConf);
-      Store<String, Object> _createMap = SqlStores.<Object>createMap(_fromSqlConfiguration, deps);
-      final Store<String, Object> map = StoresJre.<String, Object>forceBatchGets(5, _createMap);
+      SqlStoreConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(sqlConf);
+      Store<String, Object> _create = SqlStores.<Object>create(_fromSqlConfiguration, deps);
+      final Store<String, Object> map = StoresJre.<String, Object>forceBatchGets(5, _create);
       final Operation<Success> _function_1 = new Operation<Success>() {
         @Override
         public void apply(final ValueCallback<Success> callback) {

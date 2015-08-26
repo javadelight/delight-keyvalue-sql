@@ -9,7 +9,7 @@ import delight.keyvalue.Store;
  * @author <a href="http://www.mxro.de">Max Rohde</a>
  *
  */
-public interface SqlAsyncMapConfiguration extends Configuration {
+public interface SqlStoreConfiguration extends Configuration {
 
 	/**
 	 * SQL configuration for this map.

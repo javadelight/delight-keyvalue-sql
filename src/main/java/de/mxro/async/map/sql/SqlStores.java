@@ -15,7 +15,7 @@ import de.mxro.async.map.sql.internal.SqlStoreImplementation;
  * <p>
  * Core methods to interact with async-map-sql module.
  * <p>
- * Use {@link #createMap(SqlAsyncMapConfiguration, SqlAsyncMapDependencies)} to
+ * Use {@link #create(SqlStoreConfiguration, SqlStoreDependencies)} to
  * create new SQL backed up AsyncMaps.
  * 
  * @author <a href="http://www.mxro.de">Max Rohde</a>
@@ -32,13 +32,13 @@ public final class SqlStores {
      *            Run-time dependencies for the maps.
      * @return
      */
-    public static final <V> Store<String, V> createMap(final SqlAsyncMapConfiguration conf,
-            final SqlAsyncMapDependencies deps) {
+    public static final <V> Store<String, V> create(final SqlStoreConfiguration conf,
+            final SqlStoreDependencies deps) {
         return new SqlStoreImplementation<V>(conf, deps);
     }
 
-    public static final SqlAsyncMapConfiguration fromSqlConfiguration(final SqlConnectionConfiguration sqlConf) {
-        return new SqlAsyncMapConfiguration() {
+    public static final SqlStoreConfiguration fromSqlConfiguration(final SqlConnectionConfiguration sqlConf) {
+        return new SqlStoreConfiguration() {
 
             @Override
             public SqlConnectionConfiguration sql() {

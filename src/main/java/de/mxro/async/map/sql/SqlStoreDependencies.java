@@ -13,7 +13,7 @@ import de.mxro.serialization.jre.StreamSource;
  * @author <a href="http://www.mxro.de">Max Rohde</a>
  *
  */
-public interface SqlAsyncMapDependencies extends Dependencies {
+public interface SqlStoreDependencies extends Dependencies {
 
 	/**
 	 * 

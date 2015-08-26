@@ -31,8 +31,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
-import de.mxro.async.map.sql.SqlAsyncMapDependencies;
+import de.mxro.async.map.sql.SqlStoreConfiguration;
+import de.mxro.async.map.sql.SqlStoreDependencies;
 import de.mxro.serialization.jre.SerializationJre;
 import one.utils.jre.OneUtilsJre;
 
@@ -40,9 +40,9 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     private final static boolean ENABLE_DEBUG = false;
 
-    private final SqlAsyncMapConfiguration conf;
+    private final SqlStoreConfiguration conf;
 
-    private final SqlAsyncMapDependencies deps;
+    private final SqlStoreDependencies deps;
 
     // internal helper
     private java.sql.Connection connection;
@@ -880,7 +880,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         callback.onSuccess();
     }
 
-    public SqlStoreImplementation(final SqlAsyncMapConfiguration conf, final SqlAsyncMapDependencies deps) {
+    public SqlStoreImplementation(final SqlStoreConfiguration conf, final SqlStoreDependencies deps) {
         super();
 
         this.conf = conf;

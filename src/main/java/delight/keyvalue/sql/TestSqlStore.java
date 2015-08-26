@@ -1,8 +1,8 @@
 package delight.keyvalue.sql;
 
-import de.mxro.async.map.sql.SqlAsyncMapConfiguration;
-import de.mxro.async.map.sql.SqlAsyncMapDependencies;
 import de.mxro.async.map.sql.SqlConnectionConfiguration;
+import de.mxro.async.map.sql.SqlStoreConfiguration;
+import de.mxro.async.map.sql.SqlStoreDependencies;
 import de.mxro.async.map.sql.SqlStores;
 import de.mxro.serialization.Serializer;
 import de.mxro.serialization.jre.SerializationJre;
@@ -27,7 +27,7 @@ public class TestSqlStore {
   
   SqlConnectionConfiguration sqlConf;
   
-  SqlAsyncMapDependencies deps;
+  SqlStoreDependencies deps;
   
   @Test
   public void test_synchronous_operations() throws Exception {
@@ -87,21 +87,9 @@ public class TestSqlStore {
   
   @Test
   public void test_persistence_in_medium() throws Exception {
-    this.map.putSync("2", Integer.valueOf(42));
-    final Operation<Success> _function = new Operation<Success>() {
-      @Override
-      public void apply(final ValueCallback<Success> callback) {
-        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
-        TestSqlStore.this.map.commit(_asSimpleCallback);
-      }
-    };
-    Async.<Success>waitFor(_function);
-    Object _sync = this.map.getSync("2");
-    Assert.assertEquals(Integer.valueOf(42), _sync);
-    SqlAsyncMapConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
-    final Store<String, Object> map2 = SqlStores.<Object>createMap(_fromSqlConfiguration, this.deps);
-    Object _sync_1 = map2.getSync("2");
-    Assert.assertEquals(Integer.valueOf(42), _sync_1);
+    throw new Error("Unresolved compilation problems:"
+      + "\nThe method SqlStores is undefined for the type TestSqlStore"
+      + "\ncreate cannot be resolved");
   }
   
   @Test
@@ -162,16 +150,16 @@ public class TestSqlStore {
     };
     SqlStores.assertTable(this.sqlConf);
     final Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer();
-    final SqlAsyncMapDependencies _function = new SqlAsyncMapDependencies() {
+    final SqlStoreDependencies _function = new SqlStoreDependencies() {
       @Override
       public Serializer<StreamSource, StreamDestination> getSerializer() {
         return serializer;
       }
     };
     this.deps = _function;
-    SqlAsyncMapConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
-    Store<String, Object> _createMap = SqlStores.<Object>createMap(_fromSqlConfiguration, this.deps);
-    this.map = _createMap;
+    SqlStoreConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
+    Store<String, Object> _create = SqlStores.<Object>create(_fromSqlConfiguration, this.deps);
+    this.map = _create;
     final Operation<Success> _function_1 = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {

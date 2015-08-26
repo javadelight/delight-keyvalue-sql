@@ -1,6 +1,5 @@
 package delight.keyvalue.sql
 
-import de.mxro.async.map.sql.SqlAsyncMapDependencies
 import de.mxro.async.map.sql.SqlConnectionConfiguration
 import de.mxro.serialization.Serializer
 import de.mxro.serialization.jre.SerializationJre
@@ -14,6 +13,7 @@ import delight.keyvalue.Store
 import delight.keyvalue.tests.StoreTest
 import delight.keyvalue.jre.StoresJre
 import de.mxro.async.map.sql.SqlStores
+import de.mxro.async.map.sql.SqlStoreDependencies
 
 class SqlTests {
 	
@@ -22,7 +22,7 @@ class SqlTests {
 			
 		// SET UP
 		var SqlConnectionConfiguration sqlConf
-		var SqlAsyncMapDependencies deps
+		var SqlStoreDependencies deps
 		
 		sqlConf = new SqlConnectionConfiguration() {
 			override String getDriverClassName() {
@@ -52,7 +52,7 @@ class SqlTests {
 		val connection = SqlStores.assertTable(sqlConf)
 		val Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer()
 		deps = [return serializer]
-		val Store<String, Object> map = StoresJre.forceBatchGets(5, SqlStores.createMap(SqlStores.fromSqlConfiguration(sqlConf), deps))
+		val Store<String, Object> map = StoresJre.forceBatchGets(5, SqlStores.create(SqlStores.fromSqlConfiguration(sqlConf), deps))
 		Async.waitFor([ValueCallback<Success> callback|map.start(AsyncCommon.asSimpleCallback(callback))])
 		
 		// TEST
