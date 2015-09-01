@@ -610,6 +610,16 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     }
 
+    private void reconnectOnceOnException(final Runnable op) {
+        assertConnection();
+        try {
+            op.run();
+        } catch (final Throwable t) {
+            initConnection();
+            op.run();
+        }
+    }
+
     private void performMultiGet(final String uri, final int fromIdx, final int toIdx,
             final ValueCallback<List<StoreEntry<String, V>>> callback) throws SQLException, IOException {
         assertConnection();
