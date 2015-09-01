@@ -403,6 +403,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     private void performMultiGet(final List<String> keys, final ValueCallback<List<Object>> cb)
             throws SQLException, IOException {
 
+        assertConnection();
+
         final StringBuilder sql = new StringBuilder();
         sql.append(conf.sql().getMultiSelectTemplate() + " IN(");
         for (int i = 0; i < keys.size(); i++) {
@@ -413,7 +415,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
         sql.append(")");
 
-        assertConnection();
         final Statement stm = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
         stm.setFetchSize(keys.size());
