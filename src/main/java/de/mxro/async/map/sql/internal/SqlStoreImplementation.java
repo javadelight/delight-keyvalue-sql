@@ -357,7 +357,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         SqlGetResources getResult = null;
 
         try {
-
             try {
                 getResult = readFromSqlDatabase(uri);
             } catch (final Throwable t) {
