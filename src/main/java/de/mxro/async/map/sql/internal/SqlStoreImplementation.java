@@ -401,8 +401,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     private List<Object> performMultiGet(final List<String> keys) throws SQLException, IOException {
 
-        assertConnection();
-
         final StringBuilder sql = new StringBuilder();
         sql.append(conf.sql().getMultiSelectTemplate() + " IN(");
         for (int i = 0; i < keys.size(); i++) {
@@ -444,7 +442,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             results.add(res.get(key));
         }
 
-        cb.onSuccess(results);
+        return results;
 
     }
 
@@ -474,37 +472,29 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
 
         try {
-            performMultiGet(keys, new ValueCallback<List<Object>>() {
+            final List<Object> value = performMultiGet(keys);
 
-                @Override
-                public void onFailure(final Throwable t) {
-                    callback.onFailure(t);
-                }
+            results.clear();
+            synchronized (pendingInserts) {
 
-                @Override
-                public void onSuccess(final List<Object> value) {
-                    results.clear();
-                    synchronized (pendingInserts) {
+                for (int i = 0; i < keys.size(); i++) {
 
-                        for (int i = 0; i < keys.size(); i++) {
-
-                            if (pendingInserts.containsKey(keys.get(i))) {
-                                final V fromPending = (V) pendingInserts.get(keys.get(i));
-                                if (fromPending != DELETE_NODE) {
-                                    results.add(fromPending);
-                                } else {
-                                    results.add(null);
-                                }
-                            } else {
-                                results.add((V) value.get(i));
-                            }
+                    if (pendingInserts.containsKey(keys.get(i))) {
+                        final V fromPending = (V) pendingInserts.get(keys.get(i));
+                        if (fromPending != DELETE_NODE) {
+                            results.add(fromPending);
+                        } else {
+                            results.add(null);
                         }
+                    } else {
+                        results.add((V) value.get(i));
                     }
-                    assert results.size() == keys.size();
-
-                    callback.onSuccess(results);
                 }
-            });
+            }
+            assert results.size() == keys.size();
+
+            callback.onSuccess(results);
+
         } catch (final Exception e) {
             callback.onFailure(e);
             return;
