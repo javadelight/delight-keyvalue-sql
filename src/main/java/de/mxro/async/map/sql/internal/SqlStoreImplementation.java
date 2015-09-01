@@ -399,8 +399,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
     }
 
-    private void performMultiGet(final List<String> keys, final ValueCallback<List<Object>> cb)
-            throws SQLException, IOException {
+    private List<Object> performMultiGet(final List<String> keys) throws SQLException, IOException {
 
         assertConnection();
 
