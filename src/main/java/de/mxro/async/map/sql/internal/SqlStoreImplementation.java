@@ -676,7 +676,11 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             performCount(keyStartsWith, callback);
         } catch (final Throwable t) {
             initConnection();
-            performCount(keyStartsWith, callback);
+            try {
+                performCount(keyStartsWith, callback);
+            } catch (final Exception e) {
+                callback.onFailure(e);
+            }
 
         }
     }
