@@ -472,7 +472,14 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
 
         try {
-            final List<Object> value = performMultiGet(keys);
+            List<Object> value;
+
+            try {
+                value = performMultiGet(keys);
+            } catch (final Throwable t) {
+                initConnection();
+                value = performMultiGet(keys);
+            }
 
             results.clear();
             synchronized (pendingInserts) {
