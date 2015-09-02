@@ -672,21 +672,23 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     @Override
     public void count(final String keyStartsWith, final ValueCallback<Integer> callback) {
+        Integer res;
         try {
-            performCount(keyStartsWith, callback);
+            res = performCount(keyStartsWith);
         } catch (final Throwable t) {
             initConnection();
             try {
-                performCount(keyStartsWith, callback);
+                res = performCount(keyStartsWith);
             } catch (final Exception e) {
                 callback.onFailure(e);
+                return;
             }
 
         }
+        callback.onSuccess(res);
     }
 
-    private void performCount(final String uri, final ValueCallback<Integer> callback)
-            throws SQLException, IOException {
+    private Integer performCount(final String uri) throws SQLException, IOException {
         assertConnection();
 
         SqlGetResources getResult = null;
@@ -710,11 +712,11 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             getResult.getStatement = getStatement;
 
             if (getResult.resultSet.next()) {
-                callback.onSuccess(getResult.resultSet.getInt(1));
+                return getResult.resultSet.getInt(1);
 
             } else {
 
-                callback.onFailure(new Exception("Failure while running count statement."));
+                throw new RuntimeException("Failure while running count statement. No results obtained.");
 
             }
 
