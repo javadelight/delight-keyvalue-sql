@@ -401,6 +401,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     private List<Object> performMultiGet(final List<String> keys) throws SQLException, IOException {
 
+        assertConnection();
+
         final StringBuilder sql = new StringBuilder();
         sql.append(conf.sql().getMultiSelectTemplate() + " IN(");
         for (int i = 0; i < keys.size(); i++) {
@@ -566,7 +568,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                     } catch (final SQLException e) {
                         callback.onFailure(e);
                     }
-
                 }
                 callback.onSuccess();
             }
@@ -608,16 +609,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             return;
         }
 
-    }
-
-    private void reconnectOnceOnException(final Runnable op) {
-        assertConnection();
-        try {
-            op.run();
-        } catch (final Throwable t) {
-            initConnection();
-            op.run();
-        }
     }
 
     private void performMultiGet(final String uri, final int fromIdx, final int toIdx,
@@ -683,9 +674,10 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     public void count(final String keyStartsWith, final ValueCallback<Integer> callback) {
         try {
             performCount(keyStartsWith, callback);
-        } catch (final Exception e) {
-            callback.onFailure(e);
-            return;
+        } catch (final Throwable t) {
+            initConnection();
+            performCount(keyStartsWith, callback);
+
         }
     }
 
