@@ -559,9 +559,14 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             public void onSuccess() {
                 try {
                     performMultiDelete(keyStartsWith);
-                } catch (final SQLException e) {
-                    callback.onFailure(e);
-                    return;
+                } catch (final Throwable t) {
+                    initConnection();
+                    try {
+                        performMultiDelete(keyStartsWith);
+                    } catch (final SQLException e) {
+                        callback.onFailure(e);
+                    }
+
                 }
                 callback.onSuccess();
             }
