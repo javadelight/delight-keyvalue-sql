@@ -1,5 +1,6 @@
 package de.mxro.async.map.sql;
 
+import delight.functional.Function;
 import delight.keyvalue.Store;
 import delight.keyvalue.Stores;
 
@@ -105,6 +106,10 @@ public final class SqlStores {
      */
     public static final <V> Store<String, V> encodeKeysForCaseInsensitiveStorage(final Store<String, V> map) {
         return Stores.filterKeys(new EncodeCaseInsensitiveKey(), map);
+    }
+
+    public static final Function<String, String> createFilterForCaseInsensitiveStorage() {
+        return new EncodeCaseInsensitiveKey();
     }
 
 }
