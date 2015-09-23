@@ -58,6 +58,29 @@ public class SqlConfigurations {
         }
     }
 
+    public static abstract class H2 extends SqlConnectionConfiguration {
+    
+        @Override
+        public String getDriverClassName() {
+            return "org.h2.Driver";
+        }
+    
+        @Override
+        public boolean supportsInsertOrUpdate() {
+            return false;
+        }
+    
+        @Override
+        public boolean supportsMerge() {
+            return true;
+        }
+    
+        @Override
+        public String getMergeTemplate() {
+            return "MERGE INTO " + getTableName() + " (Id, Value) KEY (Id) VALUES (?, ?)";
+        }
+    }
+
     public static SqlConnectionConfiguration inMemoryH2() {
         return new SqlConnectionConfiguration() {
 
