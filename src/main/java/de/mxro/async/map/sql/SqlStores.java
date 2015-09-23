@@ -38,12 +38,12 @@ public final class SqlStores {
         return new SqlStoreImplementation<V>(conf, deps);
     }
 
-    public static final <V> Store<String, V> create(final SqlConnectionConfiguration conf,
+    public static final <V> Store<String, V> create(final SqlStoreConnectionConfiguration conf,
             final Serializer<StreamSource, StreamDestination> serializer) {
         return new SqlStoreImplementation<V>(new SqlStoreConfiguration() {
 
             @Override
-            public SqlConnectionConfiguration sql() {
+            public SqlStoreConnectionConfiguration sql() {
                 return conf;
             }
         }, new SqlStoreDependencies() {
@@ -55,17 +55,17 @@ public final class SqlStores {
         });
     }
 
-    public static final SqlStoreConfiguration fromSqlConfiguration(final SqlConnectionConfiguration sqlConf) {
+    public static final SqlStoreConfiguration fromSqlConfiguration(final SqlStoreConnectionConfiguration sqlConf) {
         return new SqlStoreConfiguration() {
 
             @Override
-            public SqlConnectionConfiguration sql() {
+            public SqlStoreConnectionConfiguration sql() {
                 return sqlConf;
             }
         };
     }
 
-    public static final Connection assertTable(final SqlConnectionConfiguration sqlConf) {
+    public static final Connection assertTable(final SqlStoreConnectionConfiguration sqlConf) {
         final Connection connection = SqlConnectionFactory.createConnection(sqlConf);
 
         try {

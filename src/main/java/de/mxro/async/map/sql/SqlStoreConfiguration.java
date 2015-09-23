@@ -16,6 +16,6 @@ public interface SqlStoreConfiguration extends Configuration {
 	 * 
 	 * @return
 	 */
-	public SqlConnectionConfiguration sql();
+	public SqlStoreConnectionConfiguration sql();
 
 }

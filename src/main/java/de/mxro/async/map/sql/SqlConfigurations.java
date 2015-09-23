@@ -2,7 +2,7 @@ package de.mxro.async.map.sql;
 
 public class SqlConfigurations {
 
-    public static abstract class MySQL extends SqlConnectionConfiguration {
+    public static abstract class MySQL extends SqlStoreConnectionConfiguration {
     
         @Override
         public boolean supportsInsertOrUpdate() {
@@ -40,7 +40,7 @@ public class SqlConfigurations {
     
     }
 
-    public static abstract class Derby extends SqlConnectionConfiguration {
+    public static abstract class Derby extends SqlStoreConnectionConfiguration {
     
         @Override
         public String getDriverClassName() {
@@ -58,7 +58,7 @@ public class SqlConfigurations {
         }
     }
 
-    public static abstract class H2 extends SqlConnectionConfiguration {
+    public static abstract class H2 extends SqlStoreConnectionConfiguration {
     
         @Override
         public String getDriverClassName() {
@@ -81,8 +81,8 @@ public class SqlConfigurations {
         }
     }
 
-    public static SqlConnectionConfiguration inMemoryH2() {
-        return new SqlConnectionConfiguration() {
+    public static SqlStoreConnectionConfiguration inMemoryH2() {
+        return new SqlStoreConnectionConfiguration() {
 
             @Override
             public String getDriverClassName() {

@@ -4,11 +4,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import de.mxro.async.map.sql.SqlConnectionConfiguration;
+import de.mxro.async.map.sql.SqlStoreConnectionConfiguration;
 
 public class SqlConnectionFactory {
 
-	public static Connection createConnection(SqlConnectionConfiguration conf) {
+	public static Connection createConnection(SqlStoreConnectionConfiguration conf) {
 		
 		try {
 			Class.forName(conf.getDriverClassName());
