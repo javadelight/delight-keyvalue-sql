@@ -2,6 +2,62 @@ package de.mxro.async.map.sql;
 
 public class SqlConfigurations {
 
+    public static abstract class MySQL extends SqlConnectionConfiguration {
+    
+        @Override
+        public boolean supportsInsertOrUpdate() {
+            return true;
+        }
+    
+        @Override
+        public String getDriverClassName() {
+            return "com.mysql.jdbc.Driver";
+        }
+    
+        @Override
+        public String getInsertOrUpdateTemplate() {
+            return "INSERT INTO `" + getTableName()
+                    + "`(`Id`, `Value`) VALUES (?,?) ON DUPLICATE KEY UPDATE `Value` = ?";
+        }
+    
+        @Override
+        public String getDeleteTableTemplate(final String tableName) {
+            return "DROP TABLE `" + tableName + "`";
+        }
+    
+        @Override
+        public String getCreateTableTemplate(final String tableName) {
+    
+            return "CREATE TABLE `" + tableName
+                    + "` (`Id` varchar( 999 ) CHARACTER SET ascii NOT NULL, `Value` longblob NOT NULL, PRIMARY KEY ( `Id` )) "
+                    + "ENGINE = MYISAM DEFAULT CHARSET = latin1;";
+        }
+    
+        @Override
+        public boolean supportsMerge() {
+            return false;
+        }
+    
+    }
+
+    public static abstract class Derby extends SqlConnectionConfiguration {
+    
+        @Override
+        public String getDriverClassName() {
+            return "org.apache.derby.jdbc.EmbeddedDriver";
+        }
+    
+        @Override
+        public boolean supportsInsertOrUpdate() {
+            return false;
+        }
+    
+        @Override
+        public boolean supportsMerge() {
+            return false;
+        }
+    }
+
     public static SqlConnectionConfiguration inMemoryH2() {
         return new SqlConnectionConfiguration() {
 
