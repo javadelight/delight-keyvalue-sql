@@ -1,6 +1,6 @@
 package de.mxro.async.map.sql;
 
-public class SqlConfigurations {
+public class SqlStoreConfigurations {
 
     public static abstract class MySQL extends SqlStoreConnectionConfiguration {
     

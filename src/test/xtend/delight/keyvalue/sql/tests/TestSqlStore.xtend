@@ -1,6 +1,8 @@
 package delight.keyvalue.sql.tests
 
-import de.mxro.async.map.sql.SqlConnectionConfiguration
+import de.mxro.async.map.sql.SqlStoreConnectionConfiguration
+import de.mxro.async.map.sql.SqlStoreDependencies
+import de.mxro.async.map.sql.SqlStores
 import de.mxro.serialization.Serializer
 import de.mxro.serialization.jre.SerializationJre
 import de.mxro.serialization.jre.StreamDestination
@@ -10,17 +12,14 @@ import delight.async.callbacks.ValueCallback
 import delight.async.jre.Async
 import delight.functional.Success
 import delight.keyvalue.Store
-import delight.keyvalue.tests.DefMultiDelete
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import de.mxro.async.map.sql.SqlStores
-import de.mxro.async.map.sql.SqlStoreDependencies
 
 class TestSqlStore {
 	package Store<String, Object> map
-	package SqlConnectionConfiguration sqlConf
+	package SqlStoreConnectionConfiguration sqlConf
 	package SqlStoreDependencies deps
 
 
@@ -77,7 +76,7 @@ class TestSqlStore {
 
 	@Before 
 	def void setUp() throws Exception {
-		sqlConf = new SqlConnectionConfiguration() {
+		sqlConf = new SqlStoreConnectionConfiguration() {
 			override String getDriverClassName() {
 				return "org.h2.Driver"
 			}

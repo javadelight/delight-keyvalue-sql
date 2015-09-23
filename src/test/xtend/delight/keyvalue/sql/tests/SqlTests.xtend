@@ -1,6 +1,8 @@
 package delight.keyvalue.sql.tests
 
-import de.mxro.async.map.sql.SqlConnectionConfiguration
+import de.mxro.async.map.sql.SqlStoreConnectionConfiguration
+import de.mxro.async.map.sql.SqlStoreDependencies
+import de.mxro.async.map.sql.SqlStores
 import de.mxro.serialization.Serializer
 import de.mxro.serialization.jre.SerializationJre
 import de.mxro.serialization.jre.StreamDestination
@@ -10,10 +12,8 @@ import delight.async.callbacks.ValueCallback
 import delight.async.jre.Async
 import delight.functional.Success
 import delight.keyvalue.Store
-import delight.keyvalue.tests.StoreTest
 import delight.keyvalue.jre.StoresJre
-import de.mxro.async.map.sql.SqlStores
-import de.mxro.async.map.sql.SqlStoreDependencies
+import delight.keyvalue.tests.StoreTest
 
 class SqlTests {
 	
@@ -21,10 +21,10 @@ class SqlTests {
 			
 			
 		// SET UP
-		var SqlConnectionConfiguration sqlConf
+		var SqlStoreConnectionConfiguration sqlConf
 		var SqlStoreDependencies deps
 		
-		sqlConf = new SqlConnectionConfiguration() {
+		sqlConf = new SqlStoreConnectionConfiguration() {
 			override String getDriverClassName() {
 				return "org.h2.Driver"
 			}

@@ -1,8 +1,13 @@
 package delight.keyvalue.sql.tests;
 
 import de.mxro.async.map.sql.SqlStoreConfiguration;
+import de.mxro.async.map.sql.SqlStoreConnectionConfiguration;
 import de.mxro.async.map.sql.SqlStoreDependencies;
 import de.mxro.async.map.sql.SqlStores;
+import de.mxro.serialization.Serializer;
+import de.mxro.serialization.jre.SerializationJre;
+import de.mxro.serialization.jre.StreamDestination;
+import de.mxro.serialization.jre.StreamSource;
 import delight.async.AsyncCommon;
 import delight.async.Operation;
 import delight.async.callbacks.SimpleCallback;
@@ -10,6 +15,7 @@ import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
 import delight.functional.Success;
 import delight.keyvalue.Store;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,7 +25,7 @@ import org.junit.Test;
 public class TestSqlStore {
   Store<String, Object> map;
   
-  /* SqlConnectionConfiguration */Object sqlConf;
+  SqlStoreConnectionConfiguration sqlConf;
   
   SqlStoreDependencies deps;
   
@@ -118,14 +124,62 @@ public class TestSqlStore {
   
   @Before
   public void setUp() throws Exception {
-    throw new Error("Unresolved compilation problems:"
-      + "\nSqlConnectionConfiguration cannot be resolved."
-      + "\nThe method getDriverClassName() of type new Object(){} must override a superclass method."
-      + "\nThe method supportsInsertOrUpdate() of type new Object(){} must override a superclass method."
-      + "\nThe method supportsMerge() of type new Object(){} must override a superclass method."
-      + "\nThe method getMergeTemplate() of type new Object(){} must override a superclass method."
-      + "\nThe method getConnectionString() of type new Object(){} must override a superclass method."
-      + "\nThe method getTableName() of type new Object(){} must override a superclass method.");
+    this.sqlConf = new SqlStoreConnectionConfiguration() {
+      @Override
+      public String getDriverClassName() {
+        return "org.h2.Driver";
+      }
+      
+      @Override
+      public boolean supportsInsertOrUpdate() {
+        return false;
+      }
+      
+      @Override
+      public boolean supportsMerge() {
+        return true;
+      }
+      
+      @Override
+      public String getMergeTemplate() {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("MERGE INTO ");
+        String _tableName = this.getTableName();
+        _builder.append(_tableName, "");
+        _builder.append(" (Id, Value) KEY (Id) VALUES (?, ?)");
+        return _builder.toString();
+      }
+      
+      @Override
+      public String getConnectionString() {
+        return "jdbc:h2:mem:test";
+      }
+      
+      @Override
+      public String getTableName() {
+        return "test";
+      }
+    };
+    SqlStores.assertTable(this.sqlConf);
+    final Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer();
+    final SqlStoreDependencies _function = new SqlStoreDependencies() {
+      @Override
+      public Serializer<StreamSource, StreamDestination> getSerializer() {
+        return serializer;
+      }
+    };
+    this.deps = _function;
+    SqlStoreConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
+    Store<String, Object> _create = SqlStores.<Object>create(_fromSqlConfiguration, this.deps);
+    this.map = _create;
+    final Operation<Success> _function_1 = new Operation<Success>() {
+      @Override
+      public void apply(final ValueCallback<Success> callback) {
+        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        TestSqlStore.this.map.start(_asSimpleCallback);
+      }
+    };
+    Async.<Success>waitFor(_function_1);
   }
   
   @After
