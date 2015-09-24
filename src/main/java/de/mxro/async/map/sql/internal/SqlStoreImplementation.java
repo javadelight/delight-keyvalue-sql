@@ -808,7 +808,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 writeWorker.getThread().getExecutor().shutdown(new WhenExecutorShutDown() {
 
                     @Override
-                    public void thenDo() {
+                    public void onSuccess() {
                         try {
 
                             if (connection != null && !connection.isClosed()) {
