@@ -4,7 +4,7 @@ import delight.async.callbacks.SimpleCallback;
 import delight.async.callbacks.ValueCallback;
 import delight.concurrency.schedule.SingleInstanceQueueWorker;
 import delight.concurrency.wrappers.SimpleExecutor;
-import delight.concurrency.wrappers.SimpleExecutor.WhenExecutorShutDown;
+import delight.concurrency.wrappers.WhenExecutorShutDown;
 import delight.functional.Fn;
 import delight.keyvalue.StoreEntry;
 import delight.keyvalue.StoreImplementation;
