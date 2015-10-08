@@ -288,6 +288,10 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     @Override
     public void putSync(final String uri, final V node) {
 
+        if (this.isShutDown.get()) {
+            throw new RuntimeException("Cannot put value for " + uri + ". Store is already shut down.");
+        }
+
         synchronized (pendingInserts) {
 
             pendingInserts.put(uri, node);
