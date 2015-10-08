@@ -815,6 +815,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
                     @Override
                     public void onSuccess() {
+                        isShutDown.set(true);
                         try {
 
                             if (connection != null && !connection.isClosed()) {
