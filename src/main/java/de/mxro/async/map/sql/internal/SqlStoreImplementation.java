@@ -292,6 +292,10 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             throw new RuntimeException("Cannot put value for " + uri + ". Store is already shut down.");
         }
 
+        if (this.isShuttingDown.get()) {
+            throw new RuntimeException("Cannot put value for " + uri + ". Store is shutting down.");
+        }
+
         synchronized (pendingInserts) {
 
             pendingInserts.put(uri, node);
