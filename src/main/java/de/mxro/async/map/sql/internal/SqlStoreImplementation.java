@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.mxro.async.map.sql.SqlStoreConfiguration;
 import de.mxro.async.map.sql.SqlStoreDependencies;
@@ -50,6 +51,10 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     private final Set<String> pendingGets;
     private final ExecutorService commitThread;
     private final WriteWorker writeWorker;
+
+    private final AtomicBoolean isShuttingDown;
+
+    private final AtomicBoolean isShutDown;
 
     private final static Object DELETE_NODE = Fn.object();
 
@@ -795,6 +800,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     @Override
     public void stop(final SimpleCallback callback) {
+        this.isShuttingDown.set(true);
         this.commit(new SimpleCallback() {
 
             @Override
@@ -816,7 +822,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                                     connection.commit();
                                     connection.close();
                                 } catch (final Throwable t) {
-                                    callback.onFailure(new Exception("Sql exception could not be closed.", t));
+                                    callback.onFailure(new Exception("Sql connection could not be closed.", t));
                                     return;
                                 }
                             }
@@ -902,6 +908,9 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 new ConcurrentLinkedQueue<String>());
 
         this.commitThread = Executors.newFixedThreadPool(1);
+
+        this.isShuttingDown = new AtomicBoolean(false);
+        this.isShutDown = new AtomicBoolean(false);
 
     }
 
