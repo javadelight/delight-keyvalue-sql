@@ -860,7 +860,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     public void stop(final SimpleCallback callback) {
         this.isShuttingDown.set(true);
 
-        new Exception("shutdown sql store").printStackTrace();
+        // new Exception("shutdown sql store").printStackTrace();
 
         this.commit(new SimpleCallback() {
 
