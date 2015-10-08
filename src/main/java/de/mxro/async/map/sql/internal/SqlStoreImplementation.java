@@ -807,54 +807,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     }
 
     @Override
-    public void stop(final SimpleCallback callback) {
-        this.isShuttingDown.set(true);
-        this.commit(new SimpleCallback() {
-
-            @Override
-            public void onFailure(final Throwable t) {
-                callback.onFailure(t);
-            }
-
-            @Override
-            public void onSuccess() {
-
-                writeWorker.getThread().getExecutor().shutdown(new WhenExecutorShutDown() {
-
-                    @Override
-                    public void onSuccess() {
-                        isShutDown.set(true);
-                        try {
-
-                            if (connection != null && !connection.isClosed()) {
-                                try {
-                                    connection.commit();
-                                    connection.close();
-                                } catch (final Throwable t) {
-                                    callback.onFailure(new Exception("Sql connection could not be closed.", t));
-                                    return;
-                                }
-                            }
-
-                        } catch (final Throwable t) {
-                            callback.onFailure(t);
-                            return;
-                        }
-
-                        callback.onSuccess();
-                    }
-
-                    @Override
-                    public void onFailure(final Throwable t) {
-                        callback.onFailure(t);
-                    }
-                });
-
-            }
-        });
-    }
-
-    @Override
     public void commit(final SimpleCallback callback) {
         commitThread.submit(new Runnable() {
 
@@ -902,6 +854,57 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             return;
         }
         callback.onSuccess();
+    }
+
+    @Override
+    public void stop(final SimpleCallback callback) {
+        this.isShuttingDown.set(true);
+
+        new Exception("shutdown sql store").printStackTrace();
+
+        this.commit(new SimpleCallback() {
+
+            @Override
+            public void onFailure(final Throwable t) {
+                callback.onFailure(t);
+            }
+
+            @Override
+            public void onSuccess() {
+
+                writeWorker.getThread().getExecutor().shutdown(new WhenExecutorShutDown() {
+
+                    @Override
+                    public void onSuccess() {
+                        isShutDown.set(true);
+                        try {
+
+                            if (connection != null && !connection.isClosed()) {
+                                try {
+                                    connection.commit();
+                                    connection.close();
+                                } catch (final Throwable t) {
+                                    callback.onFailure(new Exception("Sql connection could not be closed.", t));
+                                    return;
+                                }
+                            }
+
+                        } catch (final Throwable t) {
+                            callback.onFailure(t);
+                            return;
+                        }
+
+                        callback.onSuccess();
+                    }
+
+                    @Override
+                    public void onFailure(final Throwable t) {
+                        callback.onFailure(t);
+                    }
+                });
+
+            }
+        });
     }
 
     public SqlStoreImplementation(final SqlStoreConfiguration conf, final SqlStoreDependencies deps) {
