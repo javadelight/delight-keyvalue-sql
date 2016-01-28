@@ -4,7 +4,6 @@ import delight.async.callbacks.SimpleCallback;
 import delight.async.callbacks.ValueCallback;
 import delight.concurrency.schedule.SingleInstanceQueueWorker;
 import delight.concurrency.wrappers.SimpleExecutor;
-import delight.concurrency.wrappers.WhenExecutorShutDown;
 import delight.functional.Fn;
 import delight.functional.Success;
 import delight.keyvalue.StoreEntry;
@@ -881,15 +880,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
                     @Override
                     public void onSuccess(final Success value) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });
-
-                writeWorker.getThread().getExecutor().shutdown(new WhenExecutorShutDown() {
-
-                    @Override
-                    public void onSuccess() {
                         isShutDown.set(true);
                         try {
 
@@ -909,11 +899,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                         }
 
                         callback.onSuccess();
-                    }
 
-                    @Override
-                    public void onFailure(final Throwable t) {
-                        callback.onFailure(t);
                     }
                 });
 
