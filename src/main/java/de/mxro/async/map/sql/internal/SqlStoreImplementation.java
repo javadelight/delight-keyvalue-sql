@@ -273,7 +273,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         }
 
         public WriteWorker(final SimpleExecutor executor, final Queue<String> queue) {
-            super(executor, queue, OneUtilsJre.newJreConcurrency());
+            super(queue, OneUtilsJre.newJreConcurrency());
         }
 
     }
@@ -281,7 +281,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     private final void scheduleWrite(final String uri) {
 
         writeWorker.offer(uri);
-        writeWorker.startIfRequired();
 
     }
 
