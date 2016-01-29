@@ -39,7 +39,7 @@ import one.utils.jre.OneUtilsJre;
 
 public class SqlStoreImplementation<V> implements StoreImplementation<String, V> {
 
-    private final static boolean ENABLE_DEBUG = true;
+    private final static boolean ENABLE_LOG = true;
 
     private final SqlStoreConfiguration conf;
 
@@ -65,7 +65,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             synchronized (pendingInserts) {
 
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println(this + ": Inserting [" + items.size() + "] elements.");
                 }
 
@@ -79,7 +79,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                     final Object data;
 
                     if (!pendingInserts.containsKey(uri)) {
-                        if (ENABLE_DEBUG) {
+                        if (ENABLE_LOG) {
                             System.out
                                     .println(this + ": Insert has been performed by previous operation [" + uri + "].");
                         }
@@ -110,7 +110,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                     throw new RuntimeException(e);
                 }
 
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Inserting [" + items.size() + "] elements completed.");
                 }
 
@@ -163,7 +163,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                         insertStatement.setString(1, uri);
                         insertStatement.setBinaryStream(2, new ByteArrayInputStream(bytes));
 
-                        if (ENABLE_DEBUG) {
+                        if (ENABLE_LOG) {
                             System.out.println("SqlConnection: Inserting [" + uri + "].");
                         }
                         insertStatement.executeUpdate();
@@ -183,7 +183,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
                         updateStatement.setBinaryStream(1, new ByteArrayInputStream(bytes));
                         updateStatement.setString(2, uri);
-                        if (ENABLE_DEBUG) {
+                        if (ENABLE_LOG) {
                             System.out.println("SqlConnection: Updating [" + uri + "].");
                         }
                         updateStatement.executeUpdate();
@@ -214,7 +214,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 mergeStatement.setString(1, uri);
                 mergeStatement.setBinaryStream(2, new ByteArrayInputStream(bytes));
 
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Merging [" + uri + "].");
                 }
                 mergeStatement.executeUpdate();
@@ -243,7 +243,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 insertStatement.setBinaryStream(2, new ByteArrayInputStream(bytes));
                 insertStatement.setBinaryStream(3, new ByteArrayInputStream(bytes));
                 insertStatement.executeUpdate();
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Inserting [" + uri + "].");
                 }
 
@@ -264,7 +264,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
                 deleteStatement.setString(1, uri);
                 deleteStatement.executeUpdate();
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Deleting [" + uri + "].");
                 }
 
@@ -326,7 +326,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         synchronized (pendingInserts) {
 
-            if (ENABLE_DEBUG) {
+            if (ENABLE_LOG) {
                 System.out.println("SqlConnection: Retrieving [" + uri + "].");
             }
 
@@ -334,7 +334,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
                 final Object node = pendingInserts.get(uri);
 
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Was cached [" + uri + "] Value [" + node + "].");
                 }
 
@@ -387,7 +387,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             if (!getResult.resultSet.next()) {
 
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Not found [" + uri + "].");
                 }
 
@@ -403,7 +403,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             final Object node = deps.getSerializer()
                     .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
-            if (ENABLE_DEBUG) {
+            if (ENABLE_LOG) {
                 System.out.println("SqlConnection: Retrieved [" + node + "].");
             }
             return node;
@@ -604,7 +604,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             // System.out.println("deleteing " + deleteStatement.toString());
 
             deleteStatement.executeUpdate();
-            if (ENABLE_DEBUG) {
+            if (ENABLE_LOG) {
                 System.out.println("SqlConnection: Deleting multiple [" + uriStartsWith + "].");
             }
 
@@ -750,7 +750,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             @Override
             public void run() {
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Waiting for pending requests.\n" + "  Write worker running: ["
                             + writeWorker.isRunning() + "]\n" + "  Pending inserts: [" + pendingInserts.size() + "]\n"
                             + "  Pending gets: [" + pendingGets.size() + "]");
@@ -764,7 +764,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                     Thread.yield();
                 }
 
-                if (ENABLE_DEBUG) {
+                if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Waiting for pending requests completed.");
                 }
 
