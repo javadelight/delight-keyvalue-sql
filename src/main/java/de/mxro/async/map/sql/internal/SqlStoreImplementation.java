@@ -918,6 +918,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         this.writeWorker = new WriteWorker(OneUtilsJre.newJreConcurrency().newExecutor().newSingleThreadExecutor(this),
                 new ConcurrentLinkedQueue<String>());
+        this.writeWorker.setDelay(300);
 
         this.commitThread = Executors.newFixedThreadPool(1);
 
