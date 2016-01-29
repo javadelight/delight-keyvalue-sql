@@ -528,7 +528,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     private final SqlGetResources readFromSqlDatabase(final String uri) throws SQLException {
 
-        long start;
+        long start = 0;
         if (ENABLE_METRICS && Metrics.get() != null) {
             start = System.currentTimeMillis();
         }
@@ -551,7 +551,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         if (ENABLE_METRICS && Metrics.get() != null) {
             final long end = System.currentTimeMillis();
-            Metrics.get().record(Metrics.value("sql.get.time", 300));
+            Metrics.get().record(Metrics.value("sql.get.time", end - start));
+            // Metrics.get().record(Metrics.value("sql.get.time", end - start));
         }
 
         return res;
