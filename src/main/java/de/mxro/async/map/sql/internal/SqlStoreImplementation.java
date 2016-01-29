@@ -39,7 +39,7 @@ import one.utils.jre.OneUtilsJre;
 
 public class SqlStoreImplementation<V> implements StoreImplementation<String, V> {
 
-    private final static boolean ENABLE_DEBUG = true;
+    private final static boolean ENABLE_DEBUG = false;
 
     private final SqlStoreConfiguration conf;
 
