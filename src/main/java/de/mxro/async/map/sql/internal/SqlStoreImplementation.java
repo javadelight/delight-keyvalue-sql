@@ -39,7 +39,7 @@ import one.utils.jre.OneUtilsJre;
 
 public class SqlStoreImplementation<V> implements StoreImplementation<String, V> {
 
-    private final static boolean ENABLE_DEBUG = false;
+    private final static boolean ENABLE_DEBUG = true;
 
     private final SqlStoreConfiguration conf;
 
@@ -69,9 +69,9 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                     System.out.println(this + ": Inserting [" + items.size() + "] elements.");
                 }
 
-                if (items.size() > 1) {
-                    System.out.println("Multi insert " + items.size());
-                }
+                // if (items.size() > 1) {
+                // System.out.println("Multi insert " + items.size());
+                // }
 
                 for (final String item : items) {
                     final String uri = item;
