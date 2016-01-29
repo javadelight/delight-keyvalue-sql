@@ -526,7 +526,9 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     }
 
     private final SqlGetResources readFromSqlDatabase(final String uri) throws SQLException {
-
+        
+        if (ENABLE_METRICS && Metrics.g)
+        
         PreparedStatement getStatement = null;
 
         getStatement = connection.prepareStatement(conf.sql().getGetTemplate());
