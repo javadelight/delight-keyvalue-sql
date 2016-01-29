@@ -370,6 +370,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         SqlGetResources getResult = null;
 
+        System.out.println("read " + uri);
+
         try {
             try {
                 getResult = readFromSqlDatabase(uri);
@@ -384,6 +386,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             }
 
             if (!getResult.resultSet.next()) {
+
+                System.out.println("got null");
 
                 if (ENABLE_LOG) {
                     System.out.println("SqlConnection: Not found [" + uri + "].");
@@ -404,6 +408,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             if (ENABLE_LOG) {
                 System.out.println("SqlConnection: Retrieved [" + node + "].");
             }
+            System.out.println("got " + node);
+
             return node;
 
         } finally {
@@ -526,8 +532,6 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     }
 
     private final SqlGetResources readFromSqlDatabase(final String uri) throws SQLException {
-
-        System.out.println("Read " + uri);
 
         PreparedStatement getStatement = null;
 
