@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.mxro.async.map.sql.SqlStoreConfiguration;
@@ -551,7 +552,10 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         if (ENABLE_METRICS && Metrics.get() != null) {
             final long end = System.nanoTime();
-            Metrics.get().record(Metrics.value("sql.get.time", end - start));
+            Metrics.get().record(
+                    Metrics.value("sql.get.time", TimeUnit.MILLISECONDS.convert((end - start), TimeUnit.NANOSECONDS)));
+            Metrics.get().record(Metrics.increment("sql.get.totalTime",
+                    TimeUnit.MILLISECONDS.convert((end - start), TimeUnit.NANOSECONDS)));
             // Metrics.get().record(Metrics.value("sql.get.time", end - start));
         }
 
