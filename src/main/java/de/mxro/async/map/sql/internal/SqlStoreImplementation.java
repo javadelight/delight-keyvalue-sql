@@ -41,6 +41,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     private final static boolean ENABLE_LOG = false;
 
+    private final static boolean ENABLE_METRICS = true;
+
     private final SqlStoreConfiguration conf;
 
     private final SqlStoreDependencies deps;
