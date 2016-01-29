@@ -530,7 +530,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         long start = 0;
         if (ENABLE_METRICS && Metrics.get() != null) {
-            start = System.currentTimeMillis();
+            start = System.nanoTime();
         }
 
         PreparedStatement getStatement = null;
@@ -550,7 +550,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         res.getStatement = getStatement;
 
         if (ENABLE_METRICS && Metrics.get() != null) {
-            final long end = System.currentTimeMillis();
+            final long end = System.nanoTime();
             Metrics.get().record(Metrics.value("sql.get.time", end - start));
             // Metrics.get().record(Metrics.value("sql.get.time", end - start));
         }
