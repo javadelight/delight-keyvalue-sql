@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.mxro.async.map.sql.SqlStoreConfiguration;
 import de.mxro.async.map.sql.SqlStoreDependencies;
+import de.mxro.metrics.jre.Metrics;
 import de.mxro.serialization.jre.SerializationJre;
 import one.utils.jre.OneUtilsJre;
 
@@ -526,9 +527,11 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
     }
 
     private final SqlGetResources readFromSqlDatabase(final String uri) throws SQLException {
-        
-        if (ENABLE_METRICS && Metrics.g)
-        
+
+        if (ENABLE_METRICS && Metrics.get() != null) {
+
+        }
+
         PreparedStatement getStatement = null;
 
         getStatement = connection.prepareStatement(conf.sql().getGetTemplate());
