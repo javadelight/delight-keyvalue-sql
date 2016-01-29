@@ -69,6 +69,10 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                     System.out.println(this + ": Inserting [" + items.size() + "] elements.");
                 }
 
+                if (items.size() > 1) {
+                    System.out.println("Multi insert " + items.size());
+                }
+
                 for (final String item : items) {
                     final String uri = item;
 
