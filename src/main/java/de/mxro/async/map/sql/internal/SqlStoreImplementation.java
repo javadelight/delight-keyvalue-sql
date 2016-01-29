@@ -370,7 +370,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
         SqlGetResources getResult = null;
 
-        // System.out.println("read " + uri);
+        System.out.println("read " + uri);
 
         try {
             try {
