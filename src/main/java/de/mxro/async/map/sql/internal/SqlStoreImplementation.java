@@ -343,7 +343,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
                 return node;
             }
 
-            assert!pendingInserts.containsKey(uri);
+            assert !pendingInserts.containsKey(uri);
 
             pendingGets.add(uri);
 
@@ -720,6 +720,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             getStatement = connection.prepareStatement(conf.sql().getCountTemplate());
 
             getStatement.setQueryTimeout(150000);
+
+            System.out.println("Do count all with: " + uri + "%");
 
             getStatement.setString(1, uri + "%");
 
