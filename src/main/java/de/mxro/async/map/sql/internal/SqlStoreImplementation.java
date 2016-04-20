@@ -721,7 +721,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
             getStatement.setQueryTimeout(150000);
 
-            System.out.println("Do count all with: " + uri + "%");
+            // System.out.println("Do count all with: " + uri + "%");
 
             getStatement.setString(1, uri + "%");
 
