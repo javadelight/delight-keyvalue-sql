@@ -2,6 +2,7 @@ package de.mxro.async.map.sql;
 
 import delight.keyvalue.Store;
 import delight.keyvalue.Stores;
+import delight.keyvalue.utils.DecodeCaseInsensitiveKey;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -103,7 +104,7 @@ public final class SqlStores {
      * @return
      */
     public static final <V> Store<String, V> encodeKeysForCaseInsensitiveStorage(final Store<String, V> map) {
-        return Stores.filterKeys(Stores.createFilterForCaseInsensitiveStorage(), map);
+        return Stores.filterKeys(Stores.createFilterForCaseInsensitiveStorage(), new DecodeCaseInsensitiveKey(), map);
     }
 
 }
