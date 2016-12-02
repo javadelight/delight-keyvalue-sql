@@ -1,15 +1,18 @@
 package de.mxro.async.map.sql.internal;
 
+import delight.async.AsyncCommon;
+import delight.async.Operation;
 import delight.async.callbacks.SimpleCallback;
 import delight.async.callbacks.ValueCallback;
+import delight.concurrency.Concurrent;
 import delight.concurrency.schedule.SingleInstanceQueueWorker;
-import delight.concurrency.wrappers.SimpleExecutor;
 import delight.functional.Fn;
 import delight.functional.Success;
 import delight.keyvalue.StoreEntry;
 import delight.keyvalue.StoreImplementation;
 import delight.keyvalue.internal.v01.StoreEntryData;
 import delight.keyvalue.operations.StoreOperation;
+import delight.simplelog.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,6 +33,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.mxro.async.map.sql.SqlStoreConfiguration;
@@ -37,7 +41,7 @@ import de.mxro.async.map.sql.SqlStoreDependencies;
 import de.mxro.serialization.jre.SerializationJre;
 import one.utils.jre.OneUtilsJre;
 
-public class SqlStoreImplementation<V> implements StoreImplementation<String, V> {
+public final class SqlStoreImplementation<V> implements StoreImplementation<String, V> {
 
     private final static boolean ENABLE_LOG = false;
 
@@ -60,7 +64,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     private final static Object DELETE_NODE = Fn.object();
 
-    private class WriteWorker extends SingleInstanceQueueWorker<String> {
+    private final class WriteWorker extends SingleInstanceQueueWorker<String> {
 
         @Override
         protected void processItems(final List<String> items) {
@@ -274,8 +278,8 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             }
         }
 
-        public WriteWorker(final SimpleExecutor executor, final Queue<String> queue) {
-            super(queue, OneUtilsJre.newJreConcurrency());
+        public WriteWorker(final Object owner, final Queue<String> queue) {
+            super(owner, queue, OneUtilsJre.newJreConcurrency());
         }
 
     }
@@ -867,11 +871,77 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
 
     @Override
     public void stop(final SimpleCallback callback) {
+        if (ENABLE_LOG) {
+            Log.println(this, "Stopping ...");
+        }
         this.isShuttingDown.set(true);
 
-        // new Exception("shutdown sql store").printStackTrace();
+        final List<Operation<Success>> shutdownOperations = new ArrayList<Operation<Success>>(10);
 
-        this.commit(new SimpleCallback() {
+        shutdownOperations.add(new Operation<Success>() {
+
+            @Override
+            public void apply(final ValueCallback<Success> callback) {
+                commit(AsyncCommon.asSimpleCallback(callback));
+            }
+
+        });
+
+        shutdownOperations.add(new Operation<Success>() {
+            @Override
+            public void apply(final ValueCallback<Success> callback) {
+                if (ENABLE_LOG) {
+                    Log.println(this, "Commit successful. Now shutting down write worker.");
+                }
+                writeWorker.shutdown(callback);
+            }
+        });
+
+        shutdownOperations.add(new Operation<Success>() {
+
+            @Override
+            public void apply(final ValueCallback<Success> callback) {
+                commitThread.shutdown();
+                try {
+                    commitThread.awaitTermination(5000, TimeUnit.MILLISECONDS);
+                } catch (final InterruptedException e) {
+                    callback.onFailure(e);
+                    return;
+                }
+                callback.onSuccess(Success.INSTANCE);
+            }
+
+        });
+
+        shutdownOperations.add(new Operation<Success>() {
+            @Override
+            public void apply(final ValueCallback<Success> callback) {
+                if (ENABLE_LOG) {
+                    Log.println(this, "Write worker shut down successfully.");
+                }
+                isShutDown.set(true);
+                try {
+
+                    if (connection != null && !connection.isClosed()) {
+                        try {
+                            connection.commit();
+                            connection.close();
+                        } catch (final Throwable t) {
+                            callback.onFailure(new Exception("Sql connection could not be closed.", t));
+                            return;
+                        }
+                    }
+
+                } catch (final Throwable t) {
+                    callback.onFailure(t);
+                    return;
+                }
+
+                callback.onSuccess(Success.INSTANCE);
+            }
+        });
+
+        Concurrent.sequential(shutdownOperations, new ValueCallback<List<Success>>() {
 
             @Override
             public void onFailure(final Throwable t) {
@@ -879,42 +949,12 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
             }
 
             @Override
-            public void onSuccess() {
-
-                writeWorker.shutdown(new ValueCallback<Success>() {
-
-                    @Override
-                    public void onFailure(final Throwable t) {
-                        callback.onFailure(t);
-                    }
-
-                    @Override
-                    public void onSuccess(final Success value) {
-                        isShutDown.set(true);
-                        try {
-
-                            if (connection != null && !connection.isClosed()) {
-                                try {
-                                    connection.commit();
-                                    connection.close();
-                                } catch (final Throwable t) {
-                                    callback.onFailure(new Exception("Sql connection could not be closed.", t));
-                                    return;
-                                }
-                            }
-
-                        } catch (final Throwable t) {
-                            callback.onFailure(t);
-                            return;
-                        }
-
-                        callback.onSuccess();
-
-                    }
-                });
-
+            public void onSuccess(final List<Success> value) {
+                callback.onSuccess();
             }
+
         });
+
     }
 
     public SqlStoreImplementation(final SqlStoreConfiguration conf, final SqlStoreDependencies deps) {
@@ -926,7 +966,7 @@ public class SqlStoreImplementation<V> implements StoreImplementation<String, V>
         this.pendingInserts = Collections.synchronizedMap(new HashMap<String, Object>(100));
         this.pendingGets = Collections.synchronizedSet(new HashSet<String>());
 
-        this.writeWorker = new WriteWorker(OneUtilsJre.newJreConcurrency().newExecutor().newSingleThreadExecutor(this),
+        this.writeWorker = new WriteWorker(this + "->" + conf.sql().getConnectionString(),
                 new ConcurrentLinkedQueue<String>());
         this.writeWorker.getThread().setEnforceOwnThread(true);
         // this.writeWorker.setDelay(20);
