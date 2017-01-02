@@ -23,11 +23,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -54,6 +54,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
     // internal helper
     private java.sql.Connection connection;
     private final Map<String, Object> pendingInserts;
+    private final Map<String, Object> insertsProcessing;
     private final Set<String> pendingGets;
     private final ExecutorService commitThread;
     private final WriteWorker writeWorker;
@@ -70,39 +71,47 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
         protected void processItems(final List<String> items) {
 
             synchronized (pendingInserts) {
+                synchronized (insertsProcessing) {
 
-                if (ENABLE_LOG) {
-                    System.out.println(this + ": Inserting [" + items.size() + "] elements.");
-                }
-
-                for (final String item : items) {
-                    final String uri = item;
-
-                    final Object data;
-
-                    if (!pendingInserts.containsKey(uri)) {
-                        if (ENABLE_LOG) {
-                            System.out
-                                    .println(this + ": Insert has been performed by previous operation [" + uri + "].");
-                        }
-                        continue;
+                    if (ENABLE_LOG) {
+                        System.out.println(this + ": Inserting [" + items.size() + "] elements.");
                     }
 
-                    data = pendingInserts.get(uri);
+                    for (final String uri : items) {
 
-                    assertConnection();
+                        if (!pendingInserts.containsKey(uri)) {
+                            if (ENABLE_LOG) {
+                                System.out.println(
+                                        this + ": Insert has been performed by previous operation [" + uri + "].");
+                            }
+                            continue;
+                        }
+                        final Object data;
+                        data = pendingInserts.get(uri);
+                        insertsProcessing.put(uri, data);
+                        pendingInserts.remove(uri);
+                    }
+                }
 
+            }
+
+            assertConnection();
+
+            final Map<String, Object> toProcess = new HashMap<String, Object>(insertsProcessing);
+
+            for (final Entry<String, Object> ent : toProcess.entrySet()) {
+                final String uri = ent.getKey();
+                final Object data = ent.getValue();
+                try {
+                    writeToSqlDatabase(uri, data);
+                } catch (final Throwable t) {
+                    // try reconnecting once if any errors occur
+                    // in order to deal with mysql automatic disconnect
+                    initConnection();
                     try {
                         writeToSqlDatabase(uri, data);
-                    } catch (final Throwable t) {
-                        // try reconnecting once if any errors occur
-                        // in order to deal with mysql automatic disconnect
-                        initConnection();
-                        try {
-                            writeToSqlDatabase(uri, data);
-                        } catch (final SQLException e) {
-                            throw new RuntimeException(e);
-                        }
+                    } catch (final SQLException e) {
+                        throw new RuntimeException(e);
                     }
                 }
 
@@ -112,16 +121,16 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                     throw new RuntimeException(e);
                 }
 
-                if (ENABLE_LOG) {
-                    System.out.println("SqlConnection: Inserting [" + items.size() + "] elements completed.");
-                }
+            }
 
-                for (final String item : items) {
-                    // assert pendingInserts.containsKey(item);
-                    // might have been done by previous op
-                    pendingInserts.remove(item);
+            synchronized (insertsProcessing) {
+                for (final String uri : toProcess.keySet()) {
+                    insertsProcessing.remove(uri);
                 }
+            }
 
+            if (ENABLE_LOG) {
+                System.out.println(this + ": Inserting [" + items.size() + "] elements completed.");
             }
 
         }
@@ -152,6 +161,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
         private void performInsert(final String uri, final Object data) throws SQLException {
             final ByteArrayOutputStream os = new ByteArrayOutputStream();
             deps.getSerializer().serialize(data, SerializationJre.createStreamDestination(os));
+
             final byte[] bytes = os.toByteArray();
 
             try {
@@ -166,7 +176,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                         insertStatement.setBinaryStream(2, new ByteArrayInputStream(bytes));
 
                         if (ENABLE_LOG) {
-                            System.out.println("SqlConnection: Inserting [" + uri + "].");
+                            System.out.println(this + ": Inserting [" + uri + "].");
                         }
                         insertStatement.executeUpdate();
                         // connection.commit();
@@ -186,7 +196,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                         updateStatement.setBinaryStream(1, new ByteArrayInputStream(bytes));
                         updateStatement.setString(2, uri);
                         if (ENABLE_LOG) {
-                            System.out.println("SqlConnection: Updating [" + uri + "].");
+                            System.out.println(this + ": Updating [" + uri + "].");
                         }
                         updateStatement.executeUpdate();
                         // connection.commit();
@@ -217,7 +227,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 mergeStatement.setBinaryStream(2, new ByteArrayInputStream(bytes));
 
                 if (ENABLE_LOG) {
-                    System.out.println("SqlConnection: Merging [" + uri + "].");
+                    System.out.println(this + ": Merging [" + uri + "].");
                 }
                 mergeStatement.executeUpdate();
                 // connection.commit();
@@ -246,7 +256,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 insertStatement.setBinaryStream(3, new ByteArrayInputStream(bytes));
                 insertStatement.executeUpdate();
                 if (ENABLE_LOG) {
-                    System.out.println("SqlConnection: Inserting [" + uri + "].");
+                    System.out.println(this + ": Inserting [" + uri + "].");
                 }
 
                 // connection.commit();
@@ -267,7 +277,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 deleteStatement.setString(1, uri);
                 deleteStatement.executeUpdate();
                 if (ENABLE_LOG) {
-                    System.out.println("SqlConnection: Deleting [" + uri + "].");
+                    System.out.println(this + ": Deleting [" + uri + "].");
                 }
 
                 // connection.commit();
@@ -309,6 +319,13 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
         scheduleWrite(uri);
     }
 
+    @Override
+    public void put(final String key, final V value, final SimpleCallback callback) {
+        putSync(key, value);
+
+        callback.onSuccess();
+    }
+
     public static class SqlGetResources {
         ResultSet resultSet;
         PreparedStatement getStatement;
@@ -324,12 +341,12 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
         return value;
     }
 
-    public Object getNode(final String uri) {
-
+    @SuppressWarnings("unchecked")
+    private final V getPendingValue(final String uri) {
         synchronized (pendingInserts) {
 
             if (ENABLE_LOG) {
-                System.out.println("SqlConnection: Retrieving [" + uri + "].");
+                System.out.println(this + ": Retrieving [" + uri + "].");
             }
 
             if (pendingInserts.containsKey(uri)) {
@@ -337,17 +354,38 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 final Object node = pendingInserts.get(uri);
 
                 if (ENABLE_LOG) {
-                    System.out.println("SqlConnection: Was cached [" + uri + "] Value [" + node + "].");
+                    System.out
+                            .println(SqlStoreImplementation.this + ": Was cached [" + uri + "] Value [" + node + "].");
                 }
 
-                if (node == DELETE_NODE) {
-                    return null;
-                }
-
-                return node;
+                return (V) node;
             }
 
-            assert !pendingInserts.containsKey(uri);
+        }
+
+        synchronized (insertsProcessing) {
+            if (insertsProcessing.containsKey(uri)) {
+                final Object node = insertsProcessing.get(uri);
+
+                return (V) node;
+            }
+        }
+
+        return null;
+    }
+
+    public Object getNode(final String uri) {
+
+        final Object pendingValue = getPendingValue(uri);
+        if (pendingValue != null) {
+            if (pendingValue == DELETE_NODE) {
+                return null;
+            }
+            return pendingValue;
+        }
+
+        // TODO could this be a simple couter?
+        synchronized (pendingGets) {
 
             pendingGets.add(uri);
 
@@ -365,8 +403,8 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 pendingGets.remove(uri);
                 throw new IllegalStateException("SQL connection cannot load node: " + uri, e);
             }
-
         }
+
     }
 
     private Object performGet(final String uri) throws SQLException, IOException {
@@ -394,7 +432,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 // System.out.println("got null");
 
                 if (ENABLE_LOG) {
-                    System.out.println("SqlConnection: Not found [" + uri + "].");
+                    System.out.println(this + ": Not found [" + uri + "].");
                 }
 
                 return null;
@@ -410,7 +448,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
             final Object node = deps.getSerializer()
                     .deserialize(SerializationJre.createStreamSource(new ByteArrayInputStream(data)));
             if (ENABLE_LOG) {
-                System.out.println("SqlConnection: Retrieved [" + node + "].");
+                System.out.println(this + ": Retrieved [" + node + "].");
             }
             // System.out.println("got " + node);
 
@@ -477,17 +515,13 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
     public void get(final List<String> keys, final ValueCallback<List<V>> callback) {
         final List<V> results = new ArrayList<V>(keys.size());
 
-        synchronized (pendingInserts) {
-
-            for (final String key : keys) {
-
-                if (pendingInserts.containsKey(key)) {
-                    final V fromPending = (V) pendingInserts.get(key);
-                    if (fromPending != DELETE_NODE) {
-                        results.add(fromPending);
-                    } else {
-                        results.add(null);
-                    }
+        for (final String key : keys) {
+            final V pendingValue = getPendingValue(key);
+            if (pendingValue != null) {
+                if (pendingValue == DELETE_NODE) {
+                    results.add(null);
+                } else {
+                    results.add(pendingValue);
                 }
             }
         }
@@ -508,22 +542,21 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
             }
 
             results.clear();
-            synchronized (pendingInserts) {
 
-                for (int i = 0; i < keys.size(); i++) {
+            for (int i = 0; i < keys.size(); i++) {
+                final V pendingValue = getPendingValue(keys.get(i));
+                if (pendingValue != null) {
 
-                    if (pendingInserts.containsKey(keys.get(i))) {
-                        final V fromPending = (V) pendingInserts.get(keys.get(i));
-                        if (fromPending != DELETE_NODE) {
-                            results.add(fromPending);
-                        } else {
-                            results.add(null);
-                        }
+                    if (pendingValue != DELETE_NODE) {
+                        results.add(pendingValue);
                     } else {
-                        results.add((V) value.get(i));
+                        results.add(null);
                     }
+                } else {
+                    results.add((V) value.get(i));
                 }
             }
+
             assert results.size() == keys.size();
 
             callback.onSuccess(results);
@@ -562,6 +595,12 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
         deleteNode(key);
     }
 
+    @Override
+    public void remove(final String key, final SimpleCallback callback) {
+        removeSync(key);
+        callback.onSuccess();
+    }
+
     public void deleteNode(final String uri) {
 
         synchronized (pendingInserts) {
@@ -584,22 +623,23 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
             @Override
             public void onSuccess() {
                 try {
-                    performMultiDelete(keyStartsWith);
+                    performRemoveAll(keyStartsWith);
                 } catch (final Throwable t) {
                     initConnection();
                     try {
-                        performMultiDelete(keyStartsWith);
+                        performRemoveAll(keyStartsWith);
                     } catch (final SQLException e) {
                         callback.onFailure(e);
                     }
                 }
+
                 callback.onSuccess();
             }
         });
 
     }
 
-    private void performMultiDelete(final String uriStartsWith) throws SQLException {
+    private void performRemoveAll(final String uriStartsWith) throws SQLException {
         assertConnection();
         PreparedStatement deleteStatement = null;
 
@@ -613,7 +653,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
             deleteStatement.executeUpdate();
             if (ENABLE_LOG) {
-                System.out.println("SqlConnection: Deleting multiple [" + uriStartsWith + "].");
+                System.out.println(this + ": Deleted multiple [" + uriStartsWith + "].");
             }
 
         } finally {
@@ -754,18 +794,19 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
     }
 
-    public synchronized void waitForAllPendingRequests(final SimpleCallback callback) {
+    public void waitForAllPendingRequests(final SimpleCallback callback) {
 
         new Thread() {
 
             @Override
             public void run() {
                 if (ENABLE_LOG) {
-                    System.out.println("SqlConnection: Waiting for pending requests.\n" + "  Write worker running: ["
+                    System.out.println(this + ": Waiting for pending requests.\n" + "  Write worker running: ["
                             + writeWorker.isRunning() + "]\n" + "  Pending inserts: [" + pendingInserts.size() + "]\n"
                             + "  Pending gets: [" + pendingGets.size() + "]");
                 }
-                while (writeWorker.isRunning() || pendingInserts.size() > 0 || pendingGets.size() > 0) {
+                while (writeWorker.isRunning() || pendingInserts.size() > 0 || insertsProcessing.size() > 0
+                        || pendingGets.size() > 0) {
                     try {
                         Thread.sleep(10);
                     } catch (final Exception e) {
@@ -775,7 +816,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 }
 
                 if (ENABLE_LOG) {
-                    System.out.println("SqlConnection: Waiting for pending requests completed.");
+                    System.out.println(SqlStoreImplementation.this + ": Waiting for pending requests completed.");
                 }
 
                 callback.onSuccess();
@@ -786,30 +827,17 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
     }
 
     @Override
-    public void put(final String key, final V value, final SimpleCallback callback) {
-        putSync(key, value);
-
-        this.commit(callback);
-    }
-
-    @Override
     public void get(final String key, final ValueCallback<V> callback) {
 
         final V value = getSync(key);
         callback.onSuccess(value);
 
-    }
-
-    @Override
-    public void remove(final String key, final SimpleCallback callback) {
-        removeSync(key);
-
-        this.commit(callback);
-
+        // commit();
     }
 
     @Override
     public void performOperation(final StoreOperation<String, V> operation, final ValueCallback<Object> callback) {
+
         operation.applyOn(this, callback);
     }
 
@@ -821,6 +849,9 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
     @Override
     public void commit(final SimpleCallback callback) {
+        if (ENABLE_LOG) {
+            Log.println(this, "Committing ...");
+        }
         commitThread.submit(new Runnable() {
 
             @Override
@@ -830,6 +861,9 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
                     @Override
                     public void onSuccess() {
+                        if (ENABLE_LOG) {
+                            Log.println(this, "Committ completed.");
+                        }
                         callback.onSuccess();
                     }
 
@@ -891,7 +925,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
             @Override
             public void apply(final ValueCallback<Success> callback) {
                 if (ENABLE_LOG) {
-                    Log.println(this, "Commit successful. Now shutting down write worker.");
+                    Log.println(SqlStoreImplementation.this, "Commit successful. Now shutting down write worker.");
                 }
                 writeWorker.shutdown(callback);
             }
@@ -917,7 +951,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
             @Override
             public void apply(final ValueCallback<Success> callback) {
                 if (ENABLE_LOG) {
-                    Log.println(this, "Write worker shut down successfully.");
+                    Log.println(SqlStoreImplementation.this, "Write worker shut down successfully.");
                 }
                 isShutDown.set(true);
                 try {
@@ -963,8 +997,10 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
         this.conf = conf;
         this.deps = deps;
 
-        this.pendingInserts = Collections.synchronizedMap(new HashMap<String, Object>(100));
-        this.pendingGets = Collections.synchronizedSet(new HashSet<String>());
+        this.pendingInserts = new HashMap<String, Object>(100);
+        this.insertsProcessing = new HashMap<String, Object>(100);
+
+        this.pendingGets = new HashSet<String>();
 
         this.writeWorker = new WriteWorker(this + "->" + conf.sql().getConnectionString(),
                 new ConcurrentLinkedQueue<String>());
