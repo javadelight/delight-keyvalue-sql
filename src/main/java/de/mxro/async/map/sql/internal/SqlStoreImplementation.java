@@ -5,13 +5,13 @@ import delight.async.Operation;
 import delight.async.callbacks.SimpleCallback;
 import delight.async.callbacks.ValueCallback;
 import delight.concurrency.Concurrent;
-import delight.concurrency.schedule.SingleInstanceQueueWorker;
 import delight.functional.Fn;
 import delight.functional.Success;
 import delight.keyvalue.StoreEntry;
 import delight.keyvalue.StoreImplementation;
 import delight.keyvalue.internal.v01.StoreEntryData;
 import delight.keyvalue.operations.StoreOperation;
+import delight.scheduler.SingleInstanceQueueWorker;
 import delight.simplelog.Log;
 
 import java.io.ByteArrayInputStream;
