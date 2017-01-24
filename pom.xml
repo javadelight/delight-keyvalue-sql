@@ -21,8 +21,8 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>de.mxro.async.map</groupId>
-			<artifactId>async-map</artifactId>
+			<groupId>org.javadelight</groupId>
+			<artifactId>delight-keyvalue</artifactId>
 			<version>0.0.15</version>
 		</dependency>
 
