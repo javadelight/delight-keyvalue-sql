@@ -78,7 +78,7 @@ public class SqlTests {
       final Operation<Success> _function_1 = new Operation<Success>() {
         @Override
         public void apply(final ValueCallback<Success> callback) {
-          SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+          SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
           map.start(_asSimpleCallback);
         }
       };
@@ -87,7 +87,7 @@ public class SqlTests {
       final Operation<Success> _function_2 = new Operation<Success>() {
         @Override
         public void apply(final ValueCallback<Success> callback) {
-          SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+          SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
           map.stop(_asSimpleCallback);
         }
       };

@@ -666,12 +666,18 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
     @Override
     public void getAll(final String keyStartsWith, final int fromIdx, final int toIdx,
             final ValueCallback<List<StoreEntry<String, V>>> callback) {
-        try {
-            performMultiGet(keyStartsWith, fromIdx, toIdx, callback);
-        } catch (final Exception e) {
-            callback.onFailure(e);
-            return;
-        }
+
+        this.waitForAllPendingRequests(callback, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    performMultiGet(keyStartsWith, fromIdx, toIdx, callback);
+                } catch (final Exception e) {
+                    callback.onFailure(e);
+                    return;
+                }
+            }
+        });
 
     }
 
@@ -736,20 +742,27 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
     @Override
     public void count(final String keyStartsWith, final ValueCallback<Integer> callback) {
-        Integer res;
-        try {
-            res = performCount(keyStartsWith);
-        } catch (final Throwable t) {
-            initConnection();
-            try {
-                res = performCount(keyStartsWith);
-            } catch (final Exception e) {
-                callback.onFailure(e);
-                return;
-            }
+        waitForAllPendingRequests(callback, new Runnable() {
 
-        }
-        callback.onSuccess(res);
+            @Override
+            public void run() {
+                Integer res;
+                try {
+                    res = performCount(keyStartsWith);
+                } catch (final Throwable t) {
+                    initConnection();
+                    try {
+                        res = performCount(keyStartsWith);
+                    } catch (final Exception e) {
+                        callback.onFailure(e);
+                        return;
+                    }
+
+                }
+                callback.onSuccess(res);
+            }
+        });
+
     }
 
     private Integer performCount(final String uri) throws SQLException, IOException {
@@ -796,20 +809,25 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
     @Override
     public void getSize(final String keyStartsWith, final ValueCallback<Integer> callback) {
-        Integer res;
-        try {
-            res = performGetSize(keyStartsWith);
-        } catch (final Throwable t) {
-            initConnection();
-            try {
-                res = performGetSize(keyStartsWith);
-            } catch (final Exception e) {
-                callback.onFailure(e);
-                return;
-            }
+        waitForAllPendingRequests(callback, new Runnable() {
+            @Override
+            public void run() {
+                Integer res;
+                try {
+                    res = performGetSize(keyStartsWith);
+                } catch (final Throwable t) {
+                    initConnection();
+                    try {
+                        res = performGetSize(keyStartsWith);
+                    } catch (final Exception e) {
+                        callback.onFailure(e);
+                        return;
+                    }
 
-        }
-        callback.onSuccess(res);
+                }
+                callback.onSuccess(res);
+            }
+        });
 
     }
 
@@ -853,6 +871,10 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
             }
         }
 
+    }
+
+    public <T> void waitForAllPendingRequests(final ValueCallback<T> callback, final Runnable onSuccess) {
+        waitForAllPendingRequests(AsyncCommon.embed(AsyncCommon.asSimpleCallback(callback), onSuccess));
     }
 
     public void waitForAllPendingRequests(final SimpleCallback callback) {

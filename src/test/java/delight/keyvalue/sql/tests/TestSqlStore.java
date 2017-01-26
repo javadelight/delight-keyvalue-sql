@@ -38,7 +38,7 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
         TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
@@ -52,7 +52,7 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
         TestSqlStore.this.map.put("1", "Just a test Value", _asSimpleCallback);
       }
     };
@@ -60,7 +60,7 @@ public class TestSqlStore {
     final Operation<Success> _function_1 = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
         TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
@@ -91,7 +91,7 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
         TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
@@ -111,7 +111,7 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
         TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
@@ -175,7 +175,7 @@ public class TestSqlStore {
     final Operation<Success> _function_1 = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
         TestSqlStore.this.map.start(_asSimpleCallback);
       }
     };
@@ -187,7 +187,7 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        SimpleCallback _asSimpleCallback = AsyncCommon.asSimpleCallback(callback);
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
         TestSqlStore.this.map.stop(_asSimpleCallback);
       }
     };
