@@ -36,6 +36,10 @@ public abstract class SqlStoreConnectionConfiguration {
         return "SELECT COUNT(*) FROM `" + getTableName() + "` WHERE Id LIKE ?";
     }
 
+    public String getSizeTemplate() {
+        return "SELECT SUM(LENGTH(Value))+SUM(LENGTH(ID)) FROM `" + getTableName() + "` WHERE Id LIKE ?";
+    }
+
     public String getDeleteTemplate() {
         return "DELETE FROM `" + getTableName() + "` WHERE Id = ?";
     }

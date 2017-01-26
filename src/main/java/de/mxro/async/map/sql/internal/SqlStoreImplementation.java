@@ -794,6 +794,67 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
     }
 
+    @Override
+    public void getSize(final String keyStartsWith, final ValueCallback<Integer> callback) {
+        Integer res;
+        try {
+            res = performGetSize(keyStartsWith);
+        } catch (final Throwable t) {
+            initConnection();
+            try {
+                res = performGetSize(keyStartsWith);
+            } catch (final Exception e) {
+                callback.onFailure(e);
+                return;
+            }
+
+        }
+        callback.onSuccess(res);
+
+    }
+
+    private Integer performGetSize(final String uri) throws SQLException, IOException {
+        assertConnection();
+
+        SqlGetResources getResult = null;
+
+        try {
+
+            PreparedStatement getStatement = null;
+
+            getStatement = connection.prepareStatement(conf.sql().getSizeTemplate());
+
+            getStatement.setQueryTimeout(150000);
+
+            // System.out.println("Do count all with: " + uri + "%");
+
+            getStatement.setString(1, uri + "%");
+
+            final ResultSet resultSet = getStatement.executeQuery();
+
+            connection.commit();
+
+            getResult = new SqlGetResources();
+            getResult.resultSet = resultSet;
+            getResult.getStatement = getStatement;
+
+            if (getResult.resultSet.next()) {
+                return getResult.resultSet.getInt(1);
+
+            } else {
+
+                throw new RuntimeException("Failure while running count statement. No results obtained.");
+
+            }
+
+        } finally {
+            if (getResult != null) {
+                getResult.getStatement.close();
+            }
+        }
+
+    }
+
     public void waitForAllPendingRequests(final SimpleCallback callback) {
 
         new Thread() {
