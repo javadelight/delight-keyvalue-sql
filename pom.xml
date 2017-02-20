@@ -4,7 +4,7 @@
 	<artifactId>async-map-sql</artifactId>
 	<version>0.0.5</version>
 	<description>Implementation using JDBC SQL interface for async-map framework.</description>
-	<url>https://github.com/mxro/async-map-sql</url>
+	<url>https://github.com/javadelight/delight-async-map-sql</url>
 	<properties>
 
 		<module.importedPackages>
@@ -320,11 +320,6 @@
 		</developer>
 	</developers>
 
-	<scm>
-		<connection>scm:git:git@github.com:mxro/async-map-sql.git</connection>
-		<url>https://github.com/mxro/async-map-sql</url>
-		<developerConnection>scm:git:git@github.com:mxro/async-map-sql.git
-		</developerConnection>
-	</scm>
+	
 
 </project>
