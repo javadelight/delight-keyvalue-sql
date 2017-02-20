@@ -1,6 +1,5 @@
 package delight.keyvalue.sql.tests;
 
-import de.mxro.async.map.sql.SqlStoreConfiguration;
 import de.mxro.async.map.sql.SqlStoreConnectionConfiguration;
 import de.mxro.async.map.sql.SqlStoreDependencies;
 import de.mxro.async.map.sql.SqlStores;
@@ -10,7 +9,6 @@ import de.mxro.serialization.jre.StreamDestination;
 import de.mxro.serialization.jre.StreamSource;
 import delight.async.AsyncCommon;
 import delight.async.Operation;
-import delight.async.callbacks.SimpleCallback;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
 import delight.functional.Success;
@@ -48,7 +46,7 @@ public class SqlTests {
           StringConcatenation _builder = new StringConcatenation();
           _builder.append("MERGE INTO ");
           String _tableName = this.getTableName();
-          _builder.append(_tableName, "");
+          _builder.append(_tableName);
           _builder.append(" (Id, Value) KEY (Id) VALUES (?, ?)");
           return _builder.toString();
         }
@@ -72,14 +70,11 @@ public class SqlTests {
         }
       };
       deps = _function;
-      SqlStoreConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(sqlConf);
-      Store<String, Object> _create = SqlStores.<Object>create(_fromSqlConfiguration, deps);
-      final Store<String, Object> map = StoresJre.<String, Object>forceBatchGets(5, _create);
+      final Store<String, Object> map = StoresJre.<String, Object>forceBatchGets(5, SqlStores.<Object>create(SqlStores.fromSqlConfiguration(sqlConf), deps));
       final Operation<Success> _function_1 = new Operation<Success>() {
         @Override
         public void apply(final ValueCallback<Success> callback) {
-          SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
-          map.start(_asSimpleCallback);
+          map.start(AsyncCommon.<Success>asSimpleCallback(callback));
         }
       };
       Async.<Success>waitFor(_function_1);
@@ -87,8 +82,7 @@ public class SqlTests {
       final Operation<Success> _function_2 = new Operation<Success>() {
         @Override
         public void apply(final ValueCallback<Success> callback) {
-          SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
-          map.stop(_asSimpleCallback);
+          map.stop(AsyncCommon.<Success>asSimpleCallback(callback));
         }
       };
       Async.<Success>waitFor(_function_2);
