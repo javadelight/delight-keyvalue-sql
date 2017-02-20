@@ -3,8 +3,8 @@
 	<groupId>de.mxro.async.map.sql</groupId>
 	<artifactId>async-map-sql</artifactId>
 	<version>0.0.5</version>
-	<description>Implementation using JDBC SQL interface for async-map framework.</description>
-	<url>https://github.com/javadelight/delight-async-map-sql</url>
+	<description>Implementation using JDBC SQL interface for delight-keyvalue framework.</description>
+	<url>https://github.com/javadelight/delight-keyvalue-sql</url>
 	<properties>
 
 		<module.importedPackages>
