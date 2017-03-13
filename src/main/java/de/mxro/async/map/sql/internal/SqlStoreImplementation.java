@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.mxro.async.map.sql.SqlStoreConfiguration;
 import de.mxro.async.map.sql.SqlStoreDependencies;
+import de.mxro.metrics.MetricsCommon;
 import de.mxro.serialization.jre.SerializationJre;
 import one.utils.jre.OneUtilsJre;
 
@@ -45,7 +46,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
     private final static boolean ENABLE_LOG = false;
 
-    // private final static boolean ENABLE_METRICS = false;
+    private final static boolean ENABLE_METRICS = false;
 
     private final SqlStoreConfiguration conf;
 
@@ -99,6 +100,11 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
             final Map<String, Object> toProcess = new HashMap<String, Object>(insertsProcessing);
 
+            long start = 0L;
+            if (ENABLE_METRICS) {
+                start = System.currentTimeMillis();
+            }
+
             for (final Entry<String, Object> ent : toProcess.entrySet()) {
                 final String uri = ent.getKey();
                 final Object data = ent.getValue();
@@ -127,6 +133,11 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 for (final String uri : toProcess.keySet()) {
                     insertsProcessing.remove(uri);
                 }
+            }
+
+            if (ENABLE_METRICS) {
+                MetricsCommon.get()
+                        .record(MetricsCommon.value(this.getClass() + "-write", System.currentTimeMillis() - start));
             }
 
             if (ENABLE_LOG) {
@@ -570,6 +581,11 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
 
     private final SqlGetResources readFromSqlDatabase(final String uri) throws SQLException {
 
+        long start = 0L;
+        if (ENABLE_METRICS) {
+            start = System.currentTimeMillis();
+        }
+
         PreparedStatement getStatement = null;
 
         getStatement = connection.prepareStatement(conf.sql().getGetTemplate());
@@ -585,6 +601,11 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
         final SqlGetResources res = new SqlGetResources();
         res.resultSet = resultSet;
         res.getStatement = getStatement;
+
+        if (ENABLE_METRICS) {
+            MetricsCommon.get()
+                    .record(MetricsCommon.value(this.getClass() + "-readuri", System.currentTimeMillis() - start));
+        }
 
         return res;
 
@@ -684,6 +705,11 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
     private void performMultiGet(final String uri, final int fromIdx, final int toIdx,
             final ValueCallback<List<StoreEntry<String, V>>> callback) throws SQLException, IOException {
 
+        long start = 0L;
+        if (ENABLE_METRICS) {
+            start = System.currentTimeMillis();
+        }
+
         SqlGetResources getResult = null;
 
         final List<StoreEntry<String, V>> results = new ArrayList<StoreEntry<String, V>>();
@@ -734,6 +760,11 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 getResult.resultSet.close();
                 getResult.getStatement.close();
             }
+        }
+
+        if (ENABLE_METRICS) {
+            MetricsCommon.get()
+                    .record(MetricsCommon.value(this.getClass() + "-multiget", System.currentTimeMillis() - start));
         }
 
         callback.onSuccess(results);
