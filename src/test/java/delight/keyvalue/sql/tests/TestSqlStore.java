@@ -1,5 +1,6 @@
 package delight.keyvalue.sql.tests;
 
+import de.mxro.async.map.sql.SqlStoreConfiguration;
 import de.mxro.async.map.sql.SqlStoreConnectionConfiguration;
 import de.mxro.async.map.sql.SqlStoreDependencies;
 import de.mxro.async.map.sql.SqlStores;
@@ -9,6 +10,7 @@ import de.mxro.serialization.jre.StreamDestination;
 import de.mxro.serialization.jre.StreamSource;
 import delight.async.AsyncCommon;
 import delight.async.Operation;
+import delight.async.callbacks.SimpleCallback;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
 import delight.functional.Success;
@@ -30,16 +32,19 @@ public class TestSqlStore {
   @Test
   public void test_synchronous_operations() throws Exception {
     this.map.putSync("1", "Just a test Value");
-    Assert.assertEquals("Just a test Value", this.map.getSync("1"));
+    Object _sync = this.map.getSync("1");
+    Assert.assertEquals("Just a test Value", _sync);
     this.map.putSync("2", Integer.valueOf(42));
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        TestSqlStore.this.map.commit(AsyncCommon.<Success>asSimpleCallback(callback));
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
-    Assert.assertEquals(Integer.valueOf(42), this.map.getSync("2"));
+    Object _sync_1 = this.map.getSync("2");
+    Assert.assertEquals(Integer.valueOf(42), _sync_1);
   }
   
   @Test
@@ -47,14 +52,16 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        TestSqlStore.this.map.put("1", "Just a test Value", AsyncCommon.<Success>asSimpleCallback(callback));
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
+        TestSqlStore.this.map.put("1", "Just a test Value", _asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
     final Operation<Success> _function_1 = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        TestSqlStore.this.map.commit(AsyncCommon.<Success>asSimpleCallback(callback));
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function_1);
@@ -84,13 +91,17 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        TestSqlStore.this.map.commit(AsyncCommon.<Success>asSimpleCallback(callback));
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
-    Assert.assertEquals(Integer.valueOf(42), this.map.getSync("2"));
-    final Store<String, Object> map2 = SqlStores.<Object>create(SqlStores.fromSqlConfiguration(this.sqlConf), this.deps);
-    Assert.assertEquals(Integer.valueOf(42), map2.getSync("2"));
+    Object _sync = this.map.getSync("2");
+    Assert.assertEquals(Integer.valueOf(42), _sync);
+    SqlStoreConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
+    final Store<String, Object> map2 = SqlStores.<Object>create(_fromSqlConfiguration, this.deps);
+    Object _sync_1 = map2.getSync("2");
+    Assert.assertEquals(Integer.valueOf(42), _sync_1);
   }
   
   @Test
@@ -100,12 +111,15 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        TestSqlStore.this.map.commit(AsyncCommon.<Success>asSimpleCallback(callback));
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
+        TestSqlStore.this.map.commit(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
-    Assert.assertEquals(Integer.valueOf(42), this.map.getSync("Read_it"));
-    Assert.assertEquals(Integer.valueOf(43), this.map.getSync("Read_It"));
+    Object _sync = this.map.getSync("Read_it");
+    Assert.assertEquals(Integer.valueOf(42), _sync);
+    Object _sync_1 = this.map.getSync("Read_It");
+    Assert.assertEquals(Integer.valueOf(43), _sync_1);
   }
   
   @Before
@@ -131,7 +145,7 @@ public class TestSqlStore {
         StringConcatenation _builder = new StringConcatenation();
         _builder.append("MERGE INTO ");
         String _tableName = this.getTableName();
-        _builder.append(_tableName);
+        _builder.append(_tableName, "");
         _builder.append(" (Id, Value) KEY (Id) VALUES (?, ?)");
         return _builder.toString();
       }
@@ -155,11 +169,14 @@ public class TestSqlStore {
       }
     };
     this.deps = _function;
-    this.map = SqlStores.<Object>create(SqlStores.fromSqlConfiguration(this.sqlConf), this.deps);
+    SqlStoreConfiguration _fromSqlConfiguration = SqlStores.fromSqlConfiguration(this.sqlConf);
+    Store<String, Object> _create = SqlStores.<Object>create(_fromSqlConfiguration, this.deps);
+    this.map = _create;
     final Operation<Success> _function_1 = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        TestSqlStore.this.map.start(AsyncCommon.<Success>asSimpleCallback(callback));
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
+        TestSqlStore.this.map.start(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function_1);
@@ -170,7 +187,8 @@ public class TestSqlStore {
     final Operation<Success> _function = new Operation<Success>() {
       @Override
       public void apply(final ValueCallback<Success> callback) {
-        TestSqlStore.this.map.stop(AsyncCommon.<Success>asSimpleCallback(callback));
+        SimpleCallback _asSimpleCallback = AsyncCommon.<Success>asSimpleCallback(callback);
+        TestSqlStore.this.map.stop(_asSimpleCallback);
       }
     };
     Async.<Success>waitFor(_function);
