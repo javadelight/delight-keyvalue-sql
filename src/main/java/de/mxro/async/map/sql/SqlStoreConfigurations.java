@@ -30,7 +30,7 @@ public class SqlStoreConfigurations {
     
             return "CREATE TABLE `" + tableName
                     + "` (`Id` varchar( 999 ) CHARACTER SET ascii NOT NULL, `Value` longblob NOT NULL, PRIMARY KEY ( `Id` )) "
-                    + "ENGINE = MYISAM DEFAULT CHARSET = latin1;";
+                    + "ENGINE = ARIA PAGE_CHECKSUM=0 ROW_FORMAT=PAGE TRANSACTIONAL=0 DEFAULT CHARSET = latin1;";
         }
     
         @Override
