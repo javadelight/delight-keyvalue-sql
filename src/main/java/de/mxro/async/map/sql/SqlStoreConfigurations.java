@@ -11,7 +11,7 @@ public class SqlStoreConfigurations {
     
         @Override
         public String getDriverClassName() {
-            return "com.mysql.jdbc.Driver";
+            return "org.mariadb.jdbc.Driver";
         }
     
         @Override
