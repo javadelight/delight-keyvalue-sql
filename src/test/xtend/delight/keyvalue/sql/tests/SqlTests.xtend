@@ -10,20 +10,21 @@ import de.mxro.serialization.jre.StreamSource
 import delight.async.AsyncCommon
 import delight.async.callbacks.ValueCallback
 import delight.async.jre.Async
+import delight.concurrency.jre.ConcurrencyJre
 import delight.functional.Success
 import delight.keyvalue.Store
+import delight.keyvalue.Stores
 import delight.keyvalue.jre.StoresJre
 import delight.keyvalue.tests.StoreTest
 
 class SqlTests {
-	
+
 	def static void perform(StoreTest test) {
-			
-			
+
 		// SET UP
 		var SqlStoreConnectionConfiguration sqlConf
 		var SqlStoreDependencies deps
-		
+
 		sqlConf = new SqlStoreConnectionConfiguration() {
 			override String getDriverClassName() {
 				return "org.h2.Driver"
@@ -52,19 +53,17 @@ class SqlTests {
 		val connection = SqlStores.assertTable(sqlConf)
 		val Serializer<StreamSource, StreamDestination> serializer = SerializationJre.newJavaSerializer()
 		deps = [return serializer]
-		val Store<String, Object> map = StoresJre.forceBatchGets(5, SqlStores.create(SqlStores.fromSqlConfiguration(sqlConf), deps))
+		val Store<String, Object> map = 
+			StoresJre.forceBatchGets(5, SqlStores.create(SqlStores.fromSqlConfiguration(sqlConf), deps))
 		Async.waitFor([ValueCallback<Success> callback|map.start(AsyncCommon.asSimpleCallback(callback))])
-		
+
 		// TEST
-		
 		test.test(map)
-		
-		
+
 		// TEAR DOWN
-		
 		Async.waitFor([ValueCallback<Success> callback|map.stop(AsyncCommon.asSimpleCallback(callback))])
-		
+
 		connection.close
 	}
-	
+
 }

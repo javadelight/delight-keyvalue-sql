@@ -75,15 +75,15 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 synchronized (insertsProcessing) {
 
                     if (ENABLE_LOG) {
-                        System.out.println(this + ": Inserting [" + items.size() + "] elements.");
+                        Log.println(this, "Inserting [" + items.size() + "] elements.");
                     }
 
                     for (final String uri : items) {
 
                         if (!pendingInserts.containsKey(uri)) {
                             if (ENABLE_LOG) {
-                                System.out.println(
-                                        this + ": Insert has been performed by previous operation [" + uri + "].");
+                                Log.println(
+                                        this, "Insert has been performed by previous operation [" + uri + "].");
                             }
                             continue;
                         }
@@ -357,7 +357,7 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
         synchronized (pendingInserts) {
 
             if (ENABLE_LOG) {
-                System.out.println(this + ": Retrieving [" + uri + "].");
+                Log.println(this, "Retrieving [" + uri + "].");
             }
 
             if (pendingInserts.containsKey(uri)) {
@@ -365,8 +365,8 @@ public final class SqlStoreImplementation<V> implements StoreImplementation<Stri
                 final Object node = pendingInserts.get(uri);
 
                 if (ENABLE_LOG) {
-                    System.out
-                            .println(SqlStoreImplementation.this + ": Was cached [" + uri + "] Value [" + node + "].");
+                    Log
+                            .println(SqlStoreImplementation.this, "Was cached [" + uri + "] Value [" + node + "].");
                 }
 
                 return (V) node;
