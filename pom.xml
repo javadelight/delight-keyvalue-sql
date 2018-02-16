@@ -46,9 +46,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>de.mxro.metrics</groupId>
-			<artifactId>metrics</artifactId>
-			<version>0.0.5</version>
+			<groupId>org.javadelight</groupId>
+			<artifactId>delight-metrics</artifactId>
+			<version>0.0.6</version>
 		</dependency>
 
 		<dependency>
